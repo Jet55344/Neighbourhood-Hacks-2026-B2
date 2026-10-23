@@ -89,6 +89,24 @@ nav button{color:rgb(var(--r));opacity:.72}nav button.on{color:rgb(var(--r));opa
 .tb.prep{background:rgba(40,190,100,.16);border:1px dashed rgba(40,190,100,.65)}.tb.rm{background:rgba(255,165,0,.16);border:1px solid rgba(255,165,0,.5)}
 .note{position:relative}.note h3{margin:0 0 2px;font-size:15px;padding-right:44px}.ibtn{position:absolute;right:12px;top:12px;width:34px;height:34px}.ibtn svg{width:16px;height:16px}
 .sum{margin-top:10px;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.5}
+nav button:nth-of-type(5){--r:255,140,0}
+@media(max-width:380px){nav button{width:50px}#ind{width:50px}}
+.tt .row.sp{flex-wrap:wrap}#ad{margin-top:10px}
+.tg{position:relative;margin:12px 0 8px}
+.tgl{position:absolute;left:0;right:0;border-top:1px solid var(--gb);font:600 10px ui-monospace,Menlo,monospace;color:var(--mut)}
+.tgl span{position:absolute;top:-7px;left:0}
+.tgb{position:absolute;left:46px;right:0;top:0;bottom:0}
+.blk{position:absolute;border-radius:10px;padding:2px 7px;font-size:11px;line-height:1.25;overflow:hidden;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;background:rgba(var(--bc),.2);border:1px solid rgba(var(--bc),.7);border-left:4px solid rgb(var(--bc));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:box-shadow .2s}
+.blk.drag{cursor:grabbing;box-shadow:0 8px 24px var(--sh);z-index:5}
+.blk b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.blk small{color:var(--mut);font-size:10px;white-space:nowrap}
+.now{position:absolute;left:0;right:0;height:2px;background:#ff453a;z-index:4;pointer-events:none}
+.lgd{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--mut)}.lgd i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;background:rgb(var(--bc))}
+.dots{position:absolute;left:10px;bottom:8px;display:flex;gap:3px}.dots i{width:6px;height:6px;border-radius:50%;background:rgb(var(--bc))}
+.sw{width:28px;height:28px;padding:0;border-radius:50%;border:2px solid rgba(255,255,255,.8);cursor:pointer;background:rgb(var(--bc))}.sw.on{outline:2px solid var(--ink);outline-offset:2px}
+.sch{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.li{border-radius:16px;padding:11px 14px;margin-top:10px;font-size:13px;border-left:5px solid rgb(var(--bc))}
+.sm{padding:5px 12px;font-size:12px}
+@media(max-width:820px){.sch{grid-template-columns:1fr}}
 @media(max-width:820px){.cal{grid-template-columns:1fr}.cell{min-height:54px;padding:6px;border-radius:14px}.dow,.grid{gap:5px}.bdg{right:4px;top:6px}.card{padding:16px}h1{font-size:22px}.sbox{margin-top:8vh}}
 </style></head><body>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
@@ -104,13 +122,32 @@ nav button{color:rgb(var(--r));opacity:.72}nav button.on{color:rgb(var(--r));opa
  <p class="mut" id="st" style="margin:0 0 18px;font-size:14px">Tap the microphone to start</p>
  <div class="live glass" id="live" aria-live="polite"></div><p class="mut" style="font-size:13px;margin-top:26px">Scroll down to read your saved voice notes</p></div>
  <div class="notes"><h2>Your voice notes</h2><div id="nl"></div></div></section>
-<section class="page" id="p3"><div class="tt card glass"><div class="row sp"><h1 id="ttt"></h1><div class="row"><button class="btn glass ic" id="tp" aria-label="Previous day"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button class="btn glass" id="tt0">Today</button><button class="btn glass ic" id="tn" aria-label="Next day"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div id="ad"></div><div id="hrs"></div></div></section>
+<section class="page" id="p3"><div class="tt card glass"><div class="row sp"><h1 id="ttt"></h1><div class="row"><button class="btn glass ic" id="tp" aria-label="Previous day"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button class="btn glass" id="tt0">Today</button><button class="btn glass" id="ttr">Reset day</button><button class="btn glass ic" id="tn" aria-label="Next day"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div id="ad"></div><div id="hrs"></div></div></section>
+<section class="page" id="p4"><div class="sch">
+<div class="card glass"><h1>Weekly Routine</h1><p class="mut" style="margin:6px 0 0;font-size:13px">Things that repeat every week. Preparation and goal sessions are only placed in the gaps between them.</p>
+<label class="lbl">Describe it in your own words (optional)</label><textarea class="fld glass" id="r-ai" rows="3" placeholder="College 9 to 4 every day, job 5 to 9 on weekdays, sleep 12 to 7"></textarea>
+<div class="row" style="margin-top:8px"><button class="btn glass" id="r-aib">Add with AI</button><span class="mut" id="r-st" style="font-size:12px"></span></div>
+<label class="lbl">Or add one precisely</label><input class="fld glass" id="r-t" placeholder="Eg: College, Job, Sleep, Lunch">
+<div class="seg" id="r-d" style="margin-top:8px"></div>
+<div class="seg" style="margin-top:6px"><button class="btn glass sm" data-p="all">Every day</button><button class="btn glass sm" data-p="wk">Weekdays</button><button class="btn glass sm" data-p="we">Weekends</button></div>
+<div class="two"><div><label class="lbl">Start</label><input class="fld glass" id="r-s" type="time" value="09:00"></div><div><label class="lbl">End</label><input class="fld glass" id="r-e" type="time" value="16:00"></div></div>
+<label class="lbl">Category</label><div class="seg" id="r-c"><button class="btn glass on">College</button><button class="btn glass">Job</button><button class="btn glass">Sleep</button><button class="btn glass">Meals</button><button class="btn glass">Exercise</button><button class="btn glass">Other</button></div>
+<div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn pri" id="r-add">Add to Routine</button></div><div id="r-l"></div></div>
+<div class="card glass"><h1>Goals</h1><p class="mut" style="margin:6px 0 0;font-size:13px">Long-term goals with no deadline. Sessions are added to your timetable automatically, and each goal has its own colour.</p>
+<label class="lbl">Goal</label><input class="fld glass" id="g-t" placeholder="Eg: Get in shape, Spend more time outside">
+<label class="lbl">Colour</label><div class="seg" id="g-c"></div>
+<label class="lbl">Details</label><textarea class="fld glass" id="g-n" rows="3" placeholder="Eg: Gym sessions with a push, pull and legs split. I prefer evenings."></textarea>
+<div class="two"><div><label class="lbl">Sessions per week</label><input class="fld glass" id="g-f" type="number" min="1" max="7" value="3"></div><div><label class="lbl">Minutes per session</label><input class="fld glass" id="g-m" type="number" min="10" max="240" step="5" value="60"></div></div>
+<label class="lbl">Time of day</label><div class="seg" id="g-p"><button class="btn glass on">Any</button><button class="btn glass">Morning</button><button class="btn glass">Afternoon</button><button class="btn glass">Evening</button></div>
+<label class="lbl">Preferred days (optional)</label><div class="seg" id="g-d"></div>
+<div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn glass" id="g-x" hidden>Cancel edit</button><button class="btn pri" id="g-add">Add Goal</button></div><div id="g-l"></div></div>
+</div></section>
 </main>
 <nav class="glass" id="nav"><span id="ind"></span>
 <button class="on" aria-label="Calendar"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></button>
 <button aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
 <button aria-label="Ramble mode"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button>
-<button aria-label="Timetable"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></svg></button></nav>
+<button aria-label="Timetable"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></svg></button><button aria-label="Schedule and goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6"/></svg></button></nav>
 <div class="mask" id="mk"><div class="card glass"><div class="row sp"><h2>Schedule New Event</h2><button class="btn glass ic" id="cl" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <label class="lbl">Event title</label><input class="fld glass" id="f-t" placeholder="Eg: Meeting, Project, etc.">
 <label class="lbl">Date</label><input class="fld glass" id="f-d" type="date">
@@ -301,4 +338,140 @@ async function search(){const q=$('#q').value.trim(),R=$('#res');if(!q)return;
  R.innerHTML=hits.length?hits.map(n=>nc(n)).join(''):"<p class='mut' style='text-align:center'>No matching voice notes found.</p>"}
 $('#sb').onclick=search;$('#q').onkeydown=e=>{if(e.key==='Enter')search()};
 calR();ttR();notesR();meta();
+</script><script>
+const TC={Work:'10,108,255',Birthdays:'255,80,140',Personal:'150,90,230',Reminder:'255,170,0',Prep:'40,190,100'};
+const RC={College:'0,170,190',Job:'100,116,139',Sleep:'99,102,241',Meals:'200,140,60',Exercise:'230,80,60',Other:'120,130,150'};
+const GP=['230,80,60','255,140,0','210,170,0','40,170,90','0,170,190','10,108,255','150,90,230','230,70,160'];
+const DN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],DV=[1,2,3,4,5,6,0];
+const WIN={Any:[360,1320],Morning:[360,720],Afternoon:[720,1020],Evening:[1020,1320]};
+let routine=ld('rc_rt',[]),goals=ld('rc_goals',[]),ovr=ld('rc_ov',{}),editId=null,editG=null;
+const tm=t=>{const a=t.split(':').map(Number);return a[0]*60+a[1]};
+const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const t12m=m=>m>=1440?'12:00 AM':t12(hm(m));
+function routineOn(s){const d=par(s),p=new Date(d),o=[];p.setDate(d.getDate()-1);
+ routine.forEach(r=>{const a=tm(r.start),b=tm(r.end);
+  if(r.days.includes(d.getDay()))o.push({id:r.id,t:r.title,cat:r.cat,s:a,e:b>a?b:1440});
+  if(b<=a&&b>0&&r.days.includes(p.getDay()))o.push({id:r.id,t:r.title,cat:r.cat,s:0,e:b,x:1})});return o}
+const busyOn=s=>on(s).filter(e=>!e.all).map(e=>[tm(e.start),tm(e.end)]).concat(routineOn(s).map(r=>[r.s,r.e]));
+function findSlot(b,dur,w0,w1){for(let s=w0;s+dur<=w1;s+=15){if(!b.some(x=>s<x[1]&&s+dur>x[0]))return s}return -1}
+const goalDays=g=>g.days&&g.days.length?g.days:({1:[3],2:[2,5],3:[1,3,5],4:[1,2,4,5],5:[1,2,3,4,5],6:[1,2,3,4,5,6]}[g.freq]||[1,2,3,4,5,6,0]);
+function goalOn(s,b0){const out=[],b=b0.slice(),dow=par(s).getDay();
+ goals.forEach(g=>{if(s<g.from)return;const ds=goalDays(g),i=ds.indexOf(dow);if(i<0)return;
+  const w=WIN[g.pref]||WIN.Any;let st=findSlot(b,g.mins,w[0],w[1]);if(st<0)st=findSlot(b,g.mins,360,1320);if(st<0)return;
+  b.push([st,st+g.mins]);out.push({k:'g:'+g.id+':'+i,t:(g.labels&&g.labels.length?g.labels[i%g.labels.length]:g.title),sub:g.title,s:st,d:g.mins,c:g.color,tag:'Goal'})});return out}
+function dayBlocks(s){const o=[];
+ on(s).forEach(e=>{if(e.all)return;const a=tm(e.start);o.push({k:'e:'+e.id,t:e.title,s:a,d:Math.max(15,tm(e.end)-a),c:e.prep?TC.Prep:(TC[e.type]||TC.Work)})});
+ routineOn(s).forEach(r=>o.push({k:'r:'+r.id+(r.x?'b':'a'),t:r.t,s:r.s,d:r.e-r.s,c:RC[r.cat]||RC.Other}));
+ goalOn(s,busyOn(s)).forEach(x=>o.push(x));
+ o.forEach(b=>{const v=ovr[b.k+'|'+s];if(v!==undefined)b.s=v});return o}
+function layout(a){a.sort((x,y)=>x.s-y.s||y.d-x.d);const cols=[];
+ a.forEach(b=>{let c=cols.findIndex(e=>e<=b.s);if(c<0){c=cols.length;cols.push(0)}cols[c]=b.s+b.d;b.c0=c});
+ a.forEach(b=>{let n=b.c0+1;a.forEach(o=>{if(o!==b&&o.s<b.s+b.d&&o.s+o.d>b.s)n=Math.max(n,o.c0+1)});b.n=n})}
+function ttR(){
+ $('#ttt').textContent=par(ttd).toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'});
+ const l=on(ttd);$('#ad').className='pr';
+ $('#ad').innerHTML=rem(ttd).map(m=>`<span class='chip' style='background:rgba(255,170,0,.22);color:var(--ink)'>${esc(m)}</span>`).join('')+l.filter(e=>e.all).map(e=>`<span class='chip' style='background:rgba(${TC[e.type]||TC.Work},.22);color:var(--ink)'>${esc(e.title)} (all day)</span>`).join('');
+ const H=Math.max(19*21,innerHeight-300),bl=dayBlocks(ttd);layout(bl);
+ let h=`<div class='tg' style='height:${H}px'>`;
+ for(let k=5;k<=24;k++){h+=`<div class='tgl' style='top:${(k*60-300)/11.4}%'><span>${k===24?'12 AM':t12(k+':00').replace(':00','')}</span></div>`}
+ h+="<div class='tgb' id='tgb'>";
+ bl.forEach(b=>{const s=Math.max(300,b.s),e=Math.min(1440,b.s+b.d);if(e<=300||s>=1440)return;
+  h+=`<div class='blk' data-k='${esc(b.k)}' data-s='${b.s}' data-d='${b.d}' style='--bc:${b.c};top:${(s-300)/11.4}%;height:${(e-s)/11.4}%;left:${b.c0*100/b.n}%;width:${100/b.n-1}%'><b>${esc(b.t)}</b><small>${t12m(b.s)} to ${t12m(b.s+b.d)}${b.sub?' \u00b7 '+esc(b.sub):''}</small></div>`});
+ if(ttd===todayS){const n=new Date(),m=n.getHours()*60+n.getMinutes();if(m>=300)h+=`<div class='now' style='top:${(m-300)/11.4}%'></div>`}
+ h+="</div></div><div class='lgd'>"+[['Work',TC.Work],['Birthdays',TC.Birthdays],['Personal',TC.Personal],['Reminder',TC.Reminder],['Prep',TC.Prep],['Routine',RC.College],['Goals',GP[0]]].map(x=>`<span><i style='--bc:${x[1]}'></i>${x[0]}</span>`).join('')+'</div>';
+ $('#hrs').innerHTML=h}
+let dr=null;const hrs=$('#hrs');
+hrs.addEventListener('pointerdown',e=>{const b=e.target.closest('.blk');if(!b)return;dr={b,k:b.dataset.k,y:e.clientY,s0:+b.dataset.s,d:+b.dataset.d,H:$('#tgb').getBoundingClientRect().height,m:+b.dataset.s,mv:false};b.setPointerCapture(e.pointerId)});
+hrs.addEventListener('pointermove',e=>{if(!dr)return;const dy=e.clientY-dr.y;if(Math.abs(dy)>4)dr.mv=true;if(!dr.mv)return;dr.b.classList.add('drag');
+ let m=Math.round((dr.s0+dy/dr.H*1140)/15)*15;m=Math.max(300,Math.min(1440-dr.d,m));dr.m=m;dr.b.style.top=(m-300)/11.4+'%';dr.b.querySelector('small').textContent=t12m(m)+' to '+t12m(m+dr.d)});
+const dUp=()=>{if(!dr)return;const x=dr;dr=null;if(x.mv){ovr[x.k+'|'+ttd]=x.m;sv('rc_ov',ovr)}ttR()};
+hrs.addEventListener('pointerup',dUp);hrs.addEventListener('pointercancel',dUp);
+$('#ttr').onclick=()=>{Object.keys(ovr).forEach(k=>{if(k.endsWith('|'+ttd))delete ovr[k]});sv('rc_ov',ovr);ttR()};
+addEventListener('resize',()=>{if($('#p3').classList.contains('on'))ttR()});
+function go(i){if(i===cur)return;cur=i;bs.forEach((b,j)=>b.classList.toggle('on',j===i));const bb=bs[i];
+ ind.style.width=(bb.offsetWidth+22)+'px';ind.style.setProperty('--ir',['255,69,58','10,108,255','232,165,0','40,190,100','255,140,0'][i]);ind.style.transform='translateX('+(bb.offsetLeft-6)+'px)';setTimeout(()=>{ind.style.width=bb.offsetWidth+'px'},260);
+ $$('.page').forEach((p,j)=>p.classList.toggle('on',j===i));scrollTo({top:0});if(i===3){ttd=sel;ttR()}if(i===2)notesR();if(i===4){rtR();glR()}}
+/* calendar: colours and edit */
+const DB="<button class='btn glass' style='margin-top:8px;padding:5px 12px;font-size:12px' data-del=";
+function evH2(e,del){let h=evHtml(e,del);const c=e.prep?TC.Prep:(TC[e.type]||TC.Work);
+ h=h.replace("<span class='chip'>"+esc(e.type)+"</span>","<span class='chip' style='background:rgba("+c+",.22);color:var(--ink);border:1px solid rgba("+c+",.8)'>"+esc(e.type)+"</span>");
+ if(del&&!e.prep)h=h.replace(DB,"<button class='btn glass' style='margin-top:8px;margin-right:6px;padding:5px 12px;font-size:12px' data-ed='"+e.id+"'>Edit</button>"+DB);return h}
+function calR(){
+ $('#mt').textContent=mon.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+ const st=new Date(mon);st.setDate(1-mon.getDay());let h='';
+ for(let i=0;i<42;i++){const d=new Date(st);d.setDate(st.getDate()+i);const s=iso(d),ev=on(s),n=ev.length+rem(s).length,ty=[...new Set(ev.map(e=>e.prep?'Prep':e.type))].slice(0,4);
+  h+=`<div class='cell glass${d.getMonth()!==mon.getMonth()?' o':''}${s===sel?' sel':''}${s===todayS?' today':''}' data-d='${s}'><span class='n'>${d.getDate()}</span>${n?`<span class='bdg'>${n}</span>`:''}<span class='dots'>${ty.map(x=>`<i style='--bc:${TC[x]||TC.Work}'></i>`).join('')}</span></div>`}
+ $('#gr').innerHTML=h;
+ const l=on(sel),r=rem(sel);$('#dt').textContent=lt(sel);$('#cnt').textContent=(l.length+r.length)+' event(s) scheduled';
+ $('#evl').innerHTML=(l.length+r.length)?r.map(m=>`<div class='ev glass'><div class='row sp'><b>${esc(m)}</b><span class='chip' style='background:rgba(255,170,0,.22);color:var(--ink)'>Reminder</span></div></div>`).join('')+l.map(e=>evH2(e,1)).join(''):`<div class='empty glass'><p style='margin:8px 0 4px'><b>No events on this day</b></p><span class='mut' style='font-size:12px'>Use the + button to schedule an event, birthday, or recurring reminder.</span></div>`}
+function setSeg(id,txt){$$(id+' .btn').forEach(b=>b.classList.toggle('on',b.textContent===txt));if(id==='#s-tm')$('#hrsf').style.display=txt==='All Day'?'none':'grid'}
+function open(d){editId=null;$('#mk h2').textContent='Schedule New Event';$('#sv').textContent='Save Event to Calendar';
+ $('#f-t').value='';$('#f-n').value='';$('#f-f').value='';setSeg('#s-ty','Work');setSeg('#s-rc','One-time');setSeg('#s-tm','Specific Hours');$('#f-s').value='09:00';$('#f-e').value='10:30';
+ $('#f-d').value=d;$('#mk').classList.add('on');$('#f-t').focus()}
+function editEv(id){const e=evs.find(x=>x.id===id);if(!e)return;editId=id;$('#mk h2').textContent='Edit Event';$('#sv').textContent='Save Changes';
+ $('#f-t').value=e.title;$('#f-d').value=e.date;setSeg('#s-ty',e.type);setSeg('#s-rc',e.rec);setSeg('#s-tm',e.all?'All Day':'Specific Hours');
+ $('#f-s').value=e.start||'09:00';$('#f-e').value=e.end||'10:00';$('#f-n').value=e.notes||'';$('#f-f').value='';$('#mk').classList.add('on')}
+$('#evl').onclick=e=>{const b=e.target.closest('[data-del]'),r=e.target.closest('[data-re]'),d=e.target.closest('[data-ed]');
+ if(b){const id=+b.dataset.del;evs=evs.filter(x=>x.id!==id&&x.parent!==id);sv('rc_ev',evs);calR()}
+ else if(r){const ev=evs.find(x=>x.id===+r.dataset.re);if(ev)triage(ev)}
+ else if(d)editEv(+d.dataset.ed)};
+$('#sv').onclick=async()=>{const t=$('#f-t').value.trim();if(!t){$('#f-t').focus();return}
+ const all=val('#s-tm')==='All Day',s=$('#f-s').value||'09:00',e=$('#f-e').value||'10:00';
+ if(!all&&e<=s){$('#f-e').focus();return}
+ const btn=$('#sv');btn.textContent='Saving...';let doc='',names=[];
+ for(const f of [...$('#f-f').files]){try{const x=await readFile(f);if(x&&x.trim()){doc+=NL+'['+f.name+']'+NL+x.slice(0,4000);names.push(f.name)}}catch(x){}}
+ const base={title:t,date:$('#f-d').value||sel,type:val('#s-ty'),rec:val('#s-rc'),all,start:s,end:e,notes:$('#f-n').value.trim()};
+ let ev=editId?evs.find(x=>x.id===editId):null;
+ if(ev){Object.assign(ev,base);if(doc){ev.docText=((ev.docText||'')+doc).slice(0,8000);ev.files=(ev.files||[]).concat(names)}}
+ else{ev=Object.assign({id:Date.now(),docText:doc.slice(0,8000),files:names,tri:null},base);evs.push(ev)}
+ editId=null;sv('rc_ev',evs);btn.textContent='Save Event to Calendar';shut();sel=ev.date;mon=par(sel);mon.setDate(1);calR();triage(ev)};
+/* triage that respects routine */
+async function triage(ev){ev.tri='pending';calR();const today=iso(new Date()),busy=[];
+ let c=0;for(let d=new Date();iso(d)<=ev.date&&c<21;d.setDate(d.getDate()+1),c++){const s=iso(d);on(s).forEach(e=>{if(e.id!==ev.id&&!e.all)busy.push(s+' '+e.start+'-'+e.end+' '+e.title)});routineOn(s).forEach(r=>busy.push(s+' '+hm(r.s)+'-'+hm(r.e)+' '+r.t))}
+ const r=await ai('Today is '+today+'. A user added this calendar event. Judge it and plan preparation.'+NL+'Title: '+ev.title+NL+'Type: '+ev.type+NL+'Date: '+ev.date+' '+(ev.all?'all day':ev.start+'-'+ev.end)+NL+'Repeats: '+ev.rec+NL+'Notes: '+(ev.notes||'none')+NL+'Attached documents: '+(ev.docText||'none')+NL+'Busy slots (classes, work, sleep and other events). Never place blocks over them: '+(busy.join('; ')||'none')+NL+NL+'Rate each from 1 to 5: urgency (how soon it needs attention given the date), importance (stakes and consequences), effort (time needed to complete or prepare). Decide whether preparation or practice sessions are genuinely needed (speech, exam, presentation, interview, deadline: yes; casual meal, routine call, birthday: no). If needed, schedule 1 to 8 focused blocks on dates from '+today+' up to the event date (blocks on the event day must end before it starts), only inside free gaps between 06:00 and 22:30, with more and longer blocks for higher effort, each titled with a concrete task such as Draft outline or Rehearse out loud. If not needed return an empty blocks array. Return JSON only: {urgency:n,importance:n,effort:n,reason:one short sentence,blocks:[{date:YYYY-MM-DD,start:HH:MM,end:HH:MM,title:text}]}');
+ if(!evs.includes(ev))return;
+ if(!r||!r.urgency){ev.tri=null;sv('rc_ev',evs);calR();return}
+ ev.tri={u:cl(r.urgency),i:cl(r.importance),e:cl(r.effort),why:String(r.reason||'').slice(0,200),n:0};
+ evs=evs.filter(e=>e.parent!==ev.id);
+ if(ev.type!=='Birthdays'&&Array.isArray(r.blocks)){const ok=r.blocks.filter(b=>b&&typeof b.date==='string'&&b.date.length===10&&typeof b.start==='string'&&b.start.length===5&&typeof b.end==='string'&&b.end.length===5&&b.date>=today&&b.date<=ev.date&&b.end>b.start&&(b.date<ev.date||(!ev.all&&b.end<=ev.start))).slice(0,8);let n=0;
+  ok.forEach((b,k)=>{const dur=tm(b.end)-tm(b.start),bz=busyOn(b.date),w1=(b.date===ev.date&&!ev.all)?Math.min(1350,tm(ev.start)):1350;let s=tm(b.start);
+   if(s<360||s+dur>w1||bz.some(x=>s<x[1]&&s+dur>x[0]))s=findSlot(bz,dur,360,w1);
+   if(s<0)return;n++;evs.push({id:Date.now()+k+1,title:'Prep: '+String(b.title||'Focus session').slice(0,60)+' ('+ev.title+')',date:b.date,type:'Prep',rec:'One-time',all:false,start:hm(s),end:hm(s+dur),notes:'',parent:ev.id,prep:true})});ev.tri.n=n}
+ sv('rc_ev',evs);calR();if($('#p3').classList.contains('on'))ttR()}
+/* routine and goals page */
+const dsum=d=>DV.filter(x=>d.includes(x)).map(x=>DN[DV.indexOf(x)]).join(', ');
+$('#r-d').innerHTML=DN.map((n,i)=>`<button class='btn glass' data-v='${DV[i]}'>${n}</button>`).join('');
+$('#g-d').innerHTML=$('#r-d').innerHTML;
+$('#g-c').innerHTML=GP.map((c,i)=>`<button class='sw${i?'':' on'}' style='--bc:${c}' data-c='${c}' aria-label='Colour ${i+1}'></button>`).join('');
+const multi=id=>{$(id).onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.v!==undefined)b.classList.toggle('on')}};
+multi('#r-d');multi('#g-d');seg('#r-c');seg('#g-p');
+$('#g-c').onclick=e=>{const b=e.target.closest('.sw');if(b)$$('#g-c .sw').forEach(x=>x.classList.toggle('on',x===b))};
+function rtR(){$('#r-l').innerHTML=routine.slice().sort((a,b)=>a.start.localeCompare(b.start)).map(r=>`<div class='li glass' style='--bc:${RC[r.cat]||RC.Other}'><div class='row sp'><b>${esc(r.title)}</b><button class='btn glass sm' data-rd='${r.id}'>Delete</button></div><div class='mut'>${r.days.length===7?'Every day':esc(dsum(r.days))} \u00b7 ${t12(r.start)} to ${t12(r.end)} \u00b7 ${esc(r.cat)}</div></div>`).join('')}
+function glR(){$('#g-l').innerHTML=goals.map(g=>`<div class='li glass' style='--bc:${g.color}'><div class='row sp'><b>${esc(g.title)}</b><span class='row' style='gap:6px'><button class='btn glass sm' data-ge='${g.id}'>Edit</button><button class='btn glass sm' data-gd='${g.id}'>Delete</button></span></div><div class='mut'>${g.days&&g.days.length?esc(dsum(g.days)):g.freq+'x per week'} \u00b7 ${g.mins} min \u00b7 ${esc(g.pref)}</div>${g.details?`<div style='margin-top:6px'>${esc(g.details)}</div>`:''}${g.labels&&g.labels.length?`<div class='mut' style='margin-top:4px;font-size:12px'>Sessions: ${esc(g.labels.join(', '))}</div>`:''}</div>`).join('')}
+function resetG(){editG=null;$('#g-t').value='';$('#g-n').value='';$('#g-f').value=3;$('#g-m').value=60;$$('#g-d .on').forEach(b=>b.classList.remove('on'));$$('#g-p .btn').forEach((b,i)=>b.classList.toggle('on',i===0));$$('#g-c .sw').forEach((b,i)=>b.classList.toggle('on',i===goals.length%GP.length));$('#g-add').textContent='Add Goal';$('#g-x').hidden=true}
+$('#p4').addEventListener('click',e=>{const q=k=>e.target.closest('['+k+']');
+ const p=q('data-p'),rd=q('data-rd'),gd=q('data-gd'),ge=q('data-ge');
+ if(p){const set={all:[1,2,3,4,5,6,0],wk:[1,2,3,4,5],we:[6,0]}[p.dataset.p];$$('#r-d button').forEach(x=>x.classList.toggle('on',set.includes(+x.dataset.v)))}
+ if(rd){routine=routine.filter(x=>x.id!==+rd.dataset.rd);sv('rc_rt',routine);rtR();ttR()}
+ if(gd){goals=goals.filter(x=>x.id!==+gd.dataset.gd);sv('rc_goals',goals);glR();ttR()}
+ if(ge){const g=goals.find(x=>x.id===+ge.dataset.ge);if(!g)return;editG=g.id;$('#g-t').value=g.title;$('#g-n').value=g.details||'';$('#g-f').value=g.freq;$('#g-m').value=g.mins;
+  $$('#g-p .btn').forEach(b=>b.classList.toggle('on',b.textContent===g.pref));$$('#g-d button').forEach(b=>b.classList.toggle('on',(g.days||[]).includes(+b.dataset.v)));$$('#g-c .sw').forEach(b=>b.classList.toggle('on',b.dataset.c===g.color));
+  $('#g-add').textContent='Save Goal';$('#g-x').hidden=false;$('#g-t').scrollIntoView({behavior:'smooth',block:'center'})}});
+$('#g-x').onclick=resetG;
+$('#r-add').onclick=()=>{const t=$('#r-t').value.trim(),d=$$('#r-d .on').map(b=>+b.dataset.v),s=$('#r-s').value,e=$('#r-e').value,st=$('#r-st');
+ if(!t){$('#r-t').focus();return}if(!d.length||!s||!e||s===e){st.textContent='Pick at least one day and different start and end times.';return}
+ st.textContent='';routine.push({id:Date.now(),title:t,days:d,start:s,end:e,cat:$('#r-c .on').textContent});sv('rc_rt',routine);$('#r-t').value='';rtR();ttR()};
+$('#r-aib').onclick=async()=>{const x=$('#r-ai').value.trim(),st=$('#r-st');if(!x)return;st.textContent='Reading your routine...';
+ const r=await ai('Convert this description of a recurring weekly routine into JSON. Return JSON only: an array of {title:text,days:[numbers 0 to 6 where 0 is Sunday],start:HH:MM in 24 hour time,end:HH:MM,cat:one of College, Job, Sleep, Meals, Exercise, Other}. Sleep that crosses midnight has a start later than its end, for example 23:30 to 07:00, and sleep from midnight is 00:00 to 07:00. Description: '+x);
+ const ok=Array.isArray(r)?r.filter(i=>i&&i.title&&Array.isArray(i.days)&&i.days.length&&typeof i.start==='string'&&i.start.length===5&&typeof i.end==='string'&&i.end.length===5&&i.start!==i.end):[];
+ if(!ok.length){st.textContent='Could not read that. Try adding items one at a time below.';return}
+ ok.forEach((i,k)=>routine.push({id:Date.now()+k,title:String(i.title).slice(0,40),days:i.days.map(Number).filter(n=>n>=0&&n<=6),start:i.start,end:i.end,cat:RC[i.cat]?i.cat:'Other'}));
+ sv('rc_rt',routine);$('#r-ai').value='';st.textContent=ok.length+' item(s) added.';rtR();ttR()};
+$('#g-add').onclick=async()=>{const t=$('#g-t').value.trim();if(!t){$('#g-t').focus();return}
+ const g={id:editG||Date.now(),title:t,color:$('#g-c .sw.on').dataset.c,details:$('#g-n').value.trim(),freq:Math.min(7,Math.max(1,+$('#g-f').value||3)),mins:Math.min(240,Math.max(10,+$('#g-m').value||60)),pref:$('#g-p .on').textContent,days:$$('#g-d .on').map(b=>+b.dataset.v),from:todayS,labels:[]};
+ const old=goals.find(x=>x.id===g.id);if(old){g.from=old.from;g.labels=old.labels||[];goals=goals.map(x=>x.id===g.id?g:x)}else goals.push(g);
+ resetG();sv('rc_goals',goals);glR();ttR();
+ const n=goalDays(g).length,r=await ai('A user has a long term goal: '+t+'. Details: '+(g.details||'none')+'. They do '+n+' sessions per week. Return a JSON array of exactly '+n+' short session labels (max 4 words each) tailored to the details, for example for a gym goal: Push day, Pull day, Legs. If no variety is needed, repeat a fitting short label.');
+ if(Array.isArray(r)&&r.length){g.labels=r.map(x=>String(x).slice(0,40));sv('rc_goals',goals);glR();ttR()}};
+rtR();glR();resetG();calR();ttR();
 </script></body></html>
