@@ -107,6 +107,18 @@ nav button:nth-of-type(5){--r:255,140,0}
 .li{border-radius:16px;padding:11px 14px;margin-top:10px;font-size:13px;border-left:5px solid rgb(var(--bc))}
 .sm{padding:5px 12px;font-size:12px}
 @media(max-width:820px){.sch{grid-template-columns:1fr}}
+#pop,#pop2,#dlg{position:fixed;z-index:70;pointer-events:none;filter:drop-shadow(0 12px 28px rgba(0,0,0,.22))}
+#dlg{pointer-events:auto}#pop[hidden],#pop2[hidden],#dlg[hidden]{display:none}
+.pi{position:relative;width:max-content;max-width:min(300px,calc(100vw - 24px));border-radius:20px;padding:12px 15px;font-size:13px;line-height:1.4;color:var(--ink);background:linear-gradient(135deg,rgba(var(--pc,120,130,150),.42),rgba(var(--pc,120,130,150),.14));backdrop-filter:blur(18px) saturate(200%);-webkit-backdrop-filter:blur(18px) saturate(200%);border:1px solid rgba(255,255,255,.75);box-shadow:inset 0 2px 2px rgba(255,255,255,.95),inset 0 -3px 8px rgba(var(--pc,120,130,150),.28)}
+.pi::before{content:"";position:absolute;left:8%;right:8%;top:2px;height:42%;border-radius:18px 18px 40px 40px;background:linear-gradient(180deg,rgba(255,255,255,.65),rgba(255,255,255,0));pointer-events:none}
+.pi>*{position:relative}
+.gin{animation:gi .5s cubic-bezier(.2,.85,.25,1.08)}.gout{animation:gx .38s cubic-bezier(.5,0,.8,.4) forwards}
+@keyframes gi{0%{transform:scale(.04,.02);opacity:0;clip-path:polygon(42% 0,58% 0,52% 100%,48% 100%)}35%{opacity:1}65%{transform:scale(.8,.7);clip-path:polygon(14% 0,86% 0,100% 100%,0 100%)}100%{transform:none;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}}
+@keyframes gx{0%{transform:none;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}40%{transform:scale(.8,.7);clip-path:polygon(14% 0,86% 0,100% 100%,0 100%)}100%{transform:scale(.04,.02);opacity:0;clip-path:polygon(42% 0,58% 0,52% 100%,48% 100%)}}
+.blk{min-height:5px}.blk.rz{overflow:visible;box-shadow:0 0 0 2px rgba(var(--bc),.9),0 8px 24px var(--sh);z-index:3}
+.hd{position:absolute;left:0;right:0;height:14px;cursor:ns-resize;z-index:4}.hd.t{top:-6px}.hd.b{bottom:-6px}
+.hd::after{content:"";position:absolute;left:35%;right:35%;top:5px;height:4px;border-radius:3px;background:rgb(var(--bc));box-shadow:0 0 0 1px rgba(255,255,255,.8)}
+.orb.meter{animation:none;transform:scale(calc(1 + var(--lv,0)*.4));transition:transform .08s linear,box-shadow .08s linear;box-shadow:inset 0 4px 8px rgba(255,255,255,.95),inset 0 -12px 24px rgba(var(--c),.3),inset 0 0 0 6px rgba(255,255,255,.07),0 0 calc(40px + var(--lv,0)*80px) rgba(var(--c),.55),0 16px 36px rgba(0,0,0,.08)}
 @media(max-width:820px){.cal{grid-template-columns:1fr}.cell{min-height:54px;padding:6px;border-radius:14px}.dow,.grid{gap:5px}.bdg{right:4px;top:6px}.card{padding:16px}h1{font-size:22px}.sbox{margin-top:8vh}}
 </style></head><body>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
@@ -139,10 +151,18 @@ nav button:nth-of-type(5){--r:255,140,0}
 <label class="lbl">Details</label><textarea class="fld glass" id="g-n" rows="3" placeholder="Eg: Gym sessions with a push, pull and legs split. I prefer evenings."></textarea>
 <div class="two"><div><label class="lbl">Sessions per week</label><input class="fld glass" id="g-f" type="number" min="1" max="7" value="3"></div><div><label class="lbl">Minutes per session</label><input class="fld glass" id="g-m" type="number" min="10" max="240" step="5" value="60"></div></div>
 <label class="lbl">Time of day</label><div class="seg" id="g-p"><button class="btn glass on">Any</button><button class="btn glass">Morning</button><button class="btn glass">Afternoon</button><button class="btn glass">Evening</button></div>
+<label class="lbl">Name each session with AI</label><div class="seg" id="g-nm"><button class="btn glass on">Auto</button><button class="btn glass">Always</button><button class="btn glass">Never</button></div>
 <label class="lbl">Preferred days (optional)</label><div class="seg" id="g-d"></div>
 <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn glass" id="g-x" hidden>Cancel edit</button><button class="btn pri" id="g-add">Add Goal</button></div><div id="g-l"></div></div>
 </div></section>
 </main>
+<div id="pop" hidden><div class="pi"></div></div><div id="pop2" hidden><div class="pi"></div></div><div id="dlg" hidden><div class="pi"></div></div>
+<div class="mask" id="sk"><div class="card glass"><div class="row sp"><h2>Adjust Scores</h2><button class="btn glass ic" id="sk-x" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<p class="mut" style="font-size:13px;margin:6px 0 0">Set the ratings yourself. Prep blocks are re-planned to match.</p>
+<label class="lbl">Urgency</label><div class="seg" id="sc-u"><button class="btn glass">1</button><button class="btn glass">2</button><button class="btn glass">3</button><button class="btn glass">4</button><button class="btn glass">5</button></div>
+<label class="lbl">Importance</label><div class="seg" id="sc-i"><button class="btn glass">1</button><button class="btn glass">2</button><button class="btn glass">3</button><button class="btn glass">4</button><button class="btn glass">5</button></div>
+<label class="lbl">Prep effort</label><div class="seg" id="sc-e"><button class="btn glass">1</button><button class="btn glass">2</button><button class="btn glass">3</button><button class="btn glass">4</button><button class="btn glass">5</button></div>
+<div class="row" style="justify-content:flex-end;margin-top:18px;flex-wrap:wrap"><button class="btn glass" id="sk-ai">Let AI decide again</button><button class="btn pri" id="sk-sv">Save</button></div></div></div>
 <nav class="glass" id="nav"><span id="ind"></span>
 <button class="on" aria-label="Calendar"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></button>
 <button aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
@@ -218,7 +238,7 @@ $('#sv').onclick=()=>{const t=$('#f-t').value.trim();if(!t){$('#f-t').focus();re
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,fin='',itm='',manual=false;
 const lv=$('#live'),orb=$('#orb'),st=$('#st');
 const draw=()=>{lv.textContent=(fin+itm)||'Your words will appear here as you speak.';lv.style.opacity=(fin+itm)?1:.55};draw();
-let err='',starting=false;function finish(){const t=(fin+itm).trim();orb.classList.remove('rec');st.textContent=err||'Tap the microphone to start';err='';
+let err='',starting=false;function finish(){if(window.meterStop)meterStop();const t=(fin+itm).trim();orb.classList.remove('rec');st.textContent=err||'Tap the microphone to start';err='';
  if(t){notes.unshift({id:Date.now(),ts:Date.now(),text:t});sv('rc_notes',notes);st.textContent='Voice note saved';notesR();titleAll()}fin='';itm='';rec=null}
 orb.onclick=async()=>{if(starting)return;
  if(rec){manual=true;rec.stop();return}
@@ -289,10 +309,10 @@ function ttR(){
  $('#hrs').innerHTML=h}
 async function triage(ev){ev.tri='pending';calR();const today=iso(new Date()),busy=[];
  for(let d=new Date();iso(d)<=ev.date&&busy.length<80;d.setDate(d.getDate()+1)){on(iso(d)).forEach(e=>{if(e.id!==ev.id)busy.push(iso(d)+' '+(e.all?'all day':e.start+'-'+e.end)+' '+e.title)})}
- const r=await ai('Today is '+today+'. A user added this calendar event. Judge it and plan preparation.'+NL+'Title: '+ev.title+NL+'Type: '+ev.type+NL+'Date: '+ev.date+' '+(ev.all?'all day':ev.start+'-'+ev.end)+NL+'Repeats: '+ev.rec+NL+'Notes: '+(ev.notes||'none')+NL+'Attached documents: '+(ev.docText||'none')+NL+'Busy slots already scheduled: '+(busy.join('; ')||'none')+NL+NL+'Rate each from 1 to 5: urgency (how soon it needs attention given the date), importance (stakes and consequences), effort (time needed to complete or prepare). Decide whether preparation or practice sessions are genuinely needed (speech, exam, presentation, interview, deadline: yes; casual meal, routine call, birthday: no). If needed, schedule 1 to 8 focused blocks on dates from '+today+' up to the event date (blocks on the event day must end before it starts), between 05:00 and 23:00, not overlapping busy slots, with more and longer blocks for higher effort, each titled with a concrete task such as Draft outline or Rehearse out loud. If not needed return an empty blocks array. Return JSON only: {urgency:n,importance:n,effort:n,reason:one short sentence,blocks:[{date:YYYY-MM-DD,start:HH:MM,end:HH:MM,title:text}]}');
+ const r=await ai('Today is '+today+'. A user added this calendar event. Judge it and plan preparation.'+NL+'Title: '+ev.title+NL+'Type: '+ev.type+NL+'Date: '+ev.date+' '+(ev.all?'all day':ev.start+'-'+ev.end)+NL+'Repeats: '+ev.rec+NL+(ev.man?'The user has set the ratings: urgency '+ev.man.u+', importance '+ev.man.i+', effort '+ev.man.e+'. Use exactly these ratings and plan around them.'+NL:'')+'Notes: '+(ev.notes||'none')+NL+'Attached documents: '+(ev.docText||'none')+NL+'Busy slots already scheduled: '+(busy.join('; ')||'none')+NL+NL+'Rate each from 1 to 5: urgency (how soon it needs attention given the date), importance (stakes and consequences), effort (time needed to complete or prepare). Decide whether preparation or practice sessions are genuinely needed (speech, exam, presentation, interview, deadline: yes; casual meal, routine call, birthday: no). If needed, schedule 1 to 8 focused blocks on dates from '+today+' up to the event date (blocks on the event day must end before it starts), between 05:00 and 23:00, not overlapping busy slots, with more and longer blocks for higher effort, each titled with a concrete task such as Draft outline or Rehearse out loud. If not needed return an empty blocks array. Return JSON only: {urgency:n,importance:n,effort:n,reason:one short sentence,blocks:[{date:YYYY-MM-DD,start:HH:MM,end:HH:MM,title:text}]}');
  if(!evs.includes(ev))return;
- if(!r||!r.urgency){ev.tri=null;sv('rc_ev',evs);calR();return}
- ev.tri={u:cl(r.urgency),i:cl(r.importance),e:cl(r.effort),why:String(r.reason||'').slice(0,200),n:0};
+ if(!r||!r.urgency){ev.tri=ev.man?{u:ev.man.u,i:ev.man.i,e:ev.man.e,why:'',n:0,man:1}:null;sv('rc_ev',evs);calR();return}
+ ev.tri=ev.man?{u:ev.man.u,i:ev.man.i,e:ev.man.e,why:String(r.reason||'').slice(0,200),n:0,man:1}:{u:cl(r.urgency),i:cl(r.importance),e:cl(r.effort),why:String(r.reason||'').slice(0,200),n:0};
  evs=evs.filter(e=>e.parent!==ev.id);
  if(ev.type!=='Birthdays'&&Array.isArray(r.blocks)){const ok=r.blocks.filter(b=>b&&typeof b.date==='string'&&b.date.length===10&&typeof b.start==='string'&&b.start.length===5&&typeof b.end==='string'&&b.end.length===5&&b.date>=today&&b.date<=ev.date&&b.end>b.start&&b.start>='05:00'&&b.end<='23:59'&&(b.date<ev.date||(!ev.all&&b.end<=ev.start))).slice(0,8);
   ok.forEach((b,k)=>evs.push({id:Date.now()+k+1,title:'Prep: '+String(b.title||'Focus session').slice(0,60)+' ('+ev.title+')',date:b.date,type:'Prep',rec:'One-time',all:false,start:b.start,end:b.end,notes:'',parent:ev.id,prep:true}));ev.tri.n=ok.length}
@@ -315,7 +335,7 @@ let metaBusy=false;async function meta(){if(metaBusy)return;metaBusy=true;
  for(const n of notes.filter(x=>!x.title)){const r=await ai('Write a short heading (max 7 words, no quotes, no emoji) and a 1 to 3 sentence summary for this voice note transcript. Return JSON only: {title:text,summary:text}.'+NL+'Transcript: '+n.text.slice(0,3000));
   if(r&&r.title){n.title=String(r.title).slice(0,80);n.summary=String(r.summary||'');sv('rc_notes',notes);notesR()}else break}
  metaBusy=false}
-function finish(){const t=(fin+itm).trim();orb.classList.remove('rec');st.textContent=err||'Tap the microphone to start';err='';
+function finish(){if(window.meterStop)meterStop();const t=(fin+itm).trim();orb.classList.remove('rec');st.textContent=err||'Tap the microphone to start';err='';
  if(t){notes.unshift({id:Date.now(),ts:Date.now(),text:t});sv('rc_notes',notes);st.textContent='Voice note saved';notesR();meta()}fin='';itm='';rec=null}
 let base='',t0=0,quick=0;
 orb.onclick=()=>{
@@ -323,12 +343,12 @@ orb.onclick=()=>{
  if(!SR){st.textContent='Live transcription is not supported in this browser. Try Chrome or Safari.';return}
  fin='';itm='';base='';manual=false;err='';quick=0;draw();
  const r=new SR();r.continuous=true;r.interimResults=true;r.lang=navigator.language||'en-US';
- r.onresult=e=>{let f='',p='';for(let i=0;i<e.results.length;i++){const x=e.results[i][0].transcript;if(e.results[i].isFinal)f+=x.trim()+' ';else p+=x}fin=base+f;itm=p;draw()};
+ r.onresult=e=>{let f='',p='';for(let i=0;i<e.results.length;i++){const x=e.results[i][0].transcript;if(e.results[i].isFinal)f+=x.trim()+' ';else p+=x}fin=base+f;itm=p;draw();if(window.pulse)pulse()};
  r.onerror=e=>{if(e.error==='no-speech'||e.error==='aborted')return;manual=true;err=(e.error==='not-allowed'||e.error==='service-not-allowed')?'Microphone or speech access is blocked. Check this site permission in your browser settings, or open the page in its own tab.':e.error==='network'?'Speech recognition needs an internet connection.':'Could not record ('+e.error+').'};
  r.onend=()=>{if(itm){fin+=itm+' ';itm=''}base=fin;if(manual||rec!==r){finish();return}
   if(Date.now()-t0<1200){if(++quick>2){err='Recording could not start. Check the microphone permission for this site.';finish();return}}else quick=0;
   t0=Date.now();try{r.start()}catch(x){finish()}};
- rec=r;t0=Date.now();try{r.start();orb.classList.add('rec');st.textContent='Recording. Tap to stop and save'}catch(x){rec=null;st.textContent='Could not start the microphone.'}};
+ rec=r;t0=Date.now();try{r.start();orb.classList.add('rec');if(window.meterStart)meterStart();st.textContent='Recording. Tap to stop and save'}catch(x){rec=null;st.textContent='Could not start the microphone.'}};
 async function search(){const q=$('#q').value.trim(),R=$('#res');if(!q)return;
  if(!notes.length){R.innerHTML="<p class='mut' style='text-align:center'>You have no voice notes yet. Record one in Ramble Mode first.</p>";return}
  R.innerHTML="<p class='mut' style='text-align:center'>Searching by meaning...</p>";let hits=null;
@@ -380,12 +400,7 @@ function ttR(){
  if(ttd===todayS){const n=new Date(),m=n.getHours()*60+n.getMinutes();if(m>=300)h+=`<div class='now' style='top:${(m-300)/11.4}%'></div>`}
  h+="</div></div><div class='lgd'>"+[['Work',TC.Work],['Birthdays',TC.Birthdays],['Personal',TC.Personal],['Reminder',TC.Reminder],['Prep',TC.Prep],['Routine',RC.College],['Goals',GP[0]]].map(x=>`<span><i style='--bc:${x[1]}'></i>${x[0]}</span>`).join('')+'</div>';
  $('#hrs').innerHTML=h}
-let dr=null;const hrs=$('#hrs');
-hrs.addEventListener('pointerdown',e=>{const b=e.target.closest('.blk');if(!b)return;dr={b,k:b.dataset.k,y:e.clientY,s0:+b.dataset.s,d:+b.dataset.d,H:$('#tgb').getBoundingClientRect().height,m:+b.dataset.s,mv:false};b.setPointerCapture(e.pointerId)});
-hrs.addEventListener('pointermove',e=>{if(!dr)return;const dy=e.clientY-dr.y;if(Math.abs(dy)>4)dr.mv=true;if(!dr.mv)return;dr.b.classList.add('drag');
- let m=Math.round((dr.s0+dy/dr.H*1140)/15)*15;m=Math.max(300,Math.min(1440-dr.d,m));dr.m=m;dr.b.style.top=(m-300)/11.4+'%';dr.b.querySelector('small').textContent=t12m(m)+' to '+t12m(m+dr.d)});
-const dUp=()=>{if(!dr)return;const x=dr;dr=null;if(x.mv){ovr[x.k+'|'+ttd]=x.m;sv('rc_ov',ovr)}ttR()};
-hrs.addEventListener('pointerup',dUp);hrs.addEventListener('pointercancel',dUp);
+
 $('#ttr').onclick=()=>{Object.keys(ovr).forEach(k=>{if(k.endsWith('|'+ttd))delete ovr[k]});sv('rc_ov',ovr);ttR()};
 addEventListener('resize',()=>{if($('#p3').classList.contains('on'))ttR()});
 function go(i){if(i===cur)return;cur=i;bs.forEach((b,j)=>b.classList.toggle('on',j===i));const bb=bs[i];
@@ -428,10 +443,10 @@ $('#sv').onclick=async()=>{const t=$('#f-t').value.trim();if(!t){$('#f-t').focus
 /* triage that respects routine */
 async function triage(ev){ev.tri='pending';calR();const today=iso(new Date()),busy=[];
  let c=0;for(let d=new Date();iso(d)<=ev.date&&c<21;d.setDate(d.getDate()+1),c++){const s=iso(d);on(s).forEach(e=>{if(e.id!==ev.id&&!e.all)busy.push(s+' '+e.start+'-'+e.end+' '+e.title)});routineOn(s).forEach(r=>busy.push(s+' '+hm(r.s)+'-'+hm(r.e)+' '+r.t))}
- const r=await ai('Today is '+today+'. A user added this calendar event. Judge it and plan preparation.'+NL+'Title: '+ev.title+NL+'Type: '+ev.type+NL+'Date: '+ev.date+' '+(ev.all?'all day':ev.start+'-'+ev.end)+NL+'Repeats: '+ev.rec+NL+'Notes: '+(ev.notes||'none')+NL+'Attached documents: '+(ev.docText||'none')+NL+'Busy slots (classes, work, sleep and other events). Never place blocks over them: '+(busy.join('; ')||'none')+NL+NL+'Rate each from 1 to 5: urgency (how soon it needs attention given the date), importance (stakes and consequences), effort (time needed to complete or prepare). Decide whether preparation or practice sessions are genuinely needed (speech, exam, presentation, interview, deadline: yes; casual meal, routine call, birthday: no). If needed, schedule 1 to 8 focused blocks on dates from '+today+' up to the event date (blocks on the event day must end before it starts), only inside free gaps between 06:00 and 22:30, with more and longer blocks for higher effort, each titled with a concrete task such as Draft outline or Rehearse out loud. If not needed return an empty blocks array. Return JSON only: {urgency:n,importance:n,effort:n,reason:one short sentence,blocks:[{date:YYYY-MM-DD,start:HH:MM,end:HH:MM,title:text}]}');
+ const r=await ai('Today is '+today+'. A user added this calendar event. Judge it and plan preparation.'+NL+'Title: '+ev.title+NL+'Type: '+ev.type+NL+'Date: '+ev.date+' '+(ev.all?'all day':ev.start+'-'+ev.end)+NL+'Repeats: '+ev.rec+NL+(ev.man?'The user has set the ratings: urgency '+ev.man.u+', importance '+ev.man.i+', effort '+ev.man.e+'. Use exactly these ratings and plan around them.'+NL:'')+'Notes: '+(ev.notes||'none')+NL+'Attached documents: '+(ev.docText||'none')+NL+'Busy slots (classes, work, sleep and other events). Never place blocks over them: '+(busy.join('; ')||'none')+NL+NL+'Rate each from 1 to 5: urgency (how soon it needs attention given the date), importance (stakes and consequences), effort (time needed to complete or prepare). Decide whether preparation or practice sessions are genuinely needed (speech, exam, presentation, interview, deadline: yes; casual meal, routine call, birthday: no). If needed, schedule 1 to 8 focused blocks on dates from '+today+' up to the event date (blocks on the event day must end before it starts), only inside free gaps between 06:00 and 22:30, with more and longer blocks for higher effort, each titled with a concrete task such as Draft outline or Rehearse out loud. If not needed return an empty blocks array. Return JSON only: {urgency:n,importance:n,effort:n,reason:one short sentence,blocks:[{date:YYYY-MM-DD,start:HH:MM,end:HH:MM,title:text}]}');
  if(!evs.includes(ev))return;
- if(!r||!r.urgency){ev.tri=null;sv('rc_ev',evs);calR();return}
- ev.tri={u:cl(r.urgency),i:cl(r.importance),e:cl(r.effort),why:String(r.reason||'').slice(0,200),n:0};
+ if(!r||!r.urgency){ev.tri=ev.man?{u:ev.man.u,i:ev.man.i,e:ev.man.e,why:'',n:0,man:1}:null;sv('rc_ev',evs);calR();return}
+ ev.tri=ev.man?{u:ev.man.u,i:ev.man.i,e:ev.man.e,why:String(r.reason||'').slice(0,200),n:0,man:1}:{u:cl(r.urgency),i:cl(r.importance),e:cl(r.effort),why:String(r.reason||'').slice(0,200),n:0};
  evs=evs.filter(e=>e.parent!==ev.id);
  if(ev.type!=='Birthdays'&&Array.isArray(r.blocks)){const ok=r.blocks.filter(b=>b&&typeof b.date==='string'&&b.date.length===10&&typeof b.start==='string'&&b.start.length===5&&typeof b.end==='string'&&b.end.length===5&&b.date>=today&&b.date<=ev.date&&b.end>b.start&&(b.date<ev.date||(!ev.all&&b.end<=ev.start))).slice(0,8);let n=0;
   ok.forEach((b,k)=>{const dur=tm(b.end)-tm(b.start),bz=busyOn(b.date),w1=(b.date===ev.date&&!ev.all)?Math.min(1350,tm(ev.start)):1350;let s=tm(b.start);
@@ -474,4 +489,135 @@ $('#g-add').onclick=async()=>{const t=$('#g-t').value.trim();if(!t){$('#g-t').fo
  const n=goalDays(g).length,r=await ai('A user has a long term goal: '+t+'. Details: '+(g.details||'none')+'. They do '+n+' sessions per week. Return a JSON array of exactly '+n+' short session labels (max 4 words each) tailored to the details, for example for a gym goal: Push day, Pull day, Legs. If no variety is needed, repeat a fitting short label.');
  if(Array.isArray(r)&&r.length){g.labels=r.map(x=>String(x).slice(0,40));sv('rc_goals',goals);glR();ttR()}};
 rtR();glR();resetG();calR();ttR();
+</script><script>
+let mvlog=ld('rc_mv',{}),asked=ld('rc_ask',{}),rzK=null,dr=null,lastTap={k:null,t:0},au=null,mtok=0,clk=0;
+const hrs=$('#hrs'),hv={k:null,t:0,shown:null};
+/* genie popups */
+function put(el,html,col,x,y,center){const p=el.firstElementChild;p.innerHTML=html;p.style.setProperty('--pc',col);el.hidden=false;el.style.left='0px';el.style.top='0px';
+ const w=el.offsetWidth,h=el.offsetHeight;let L,T;
+ if(center){L=(innerWidth-w)/2;T=Math.max(12,(innerHeight-h)/2-40)}else{L=Math.min(innerWidth-w-8,Math.max(8,x+14));T=Math.min(innerHeight-h-8,Math.max(8,y-h/2))}
+ el.style.left=L+'px';el.style.top=T+'px'}
+function genIn(el,sx,sy){const p=el.firstElementChild;p.onanimationend=null;p.style.transformOrigin=(sx-parseFloat(el.style.left))+'px '+(sy-parseFloat(el.style.top))+'px';p.classList.remove('gout');p.classList.remove('gin');void p.offsetWidth;p.classList.add('gin')}
+function genOut(el,sx,sy,done){if(el.hidden){if(done)done();return}const p=el.firstElementChild;p.style.transformOrigin=(sx-parseFloat(el.style.left))+'px '+(sy-parseFloat(el.style.top))+'px';p.classList.remove('gin');p.classList.add('gout');
+ p.onanimationend=()=>{el.hidden=true;p.classList.remove('gout');p.onanimationend=null;if(done)done()}}
+function hideHv(){clearTimeout(hv.t);clearInterval(clk);if(hv.shown){const s=hv.shown;hv.shown=null;genOut(s.el,s.sx,s.sy)}hv.k=null}
+function showBlk(b,x){const r=b.getBoundingClientRect(),el=$('#pop'),sx=r.left+r.width/2,sy=r.top+r.height/2;
+ put(el,`<b style='font-size:14px'>${esc(b.querySelector('b').textContent)}</b><div>${esc(b.querySelector('small').textContent)}</div>`,b.style.getPropertyValue('--bc'),x,sy);genIn(el,sx,sy);hv.shown={el,sx,sy}}
+function showNow(){const n=$('#tgb .now');if(!n)return;const r=n.getBoundingClientRect(),g=$('#tgb').getBoundingClientRect(),el=$('#pop2'),sy=r.top+1;
+ const tick=()=>{el.firstElementChild.innerHTML=`<div class='mut' style='font-size:11px'>Current time</div><b style='font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap'>${new Date().toLocaleTimeString('en-US')}</b>`};
+ tick();put(el,el.firstElementChild.innerHTML,'255,69,58',g.right-6,sy);genIn(el,g.right,sy);hv.shown={el,sx:g.right,sy};clk=setInterval(tick,250)}
+function hit(e){const g=$('#tgb');if(!g)return null;
+ const r=[...g.querySelectorAll('.blk')].map(b=>{const q=b.getBoundingClientRect();return{b,dy:e.clientY<q.top?q.top-e.clientY:e.clientY>q.bottom?e.clientY-q.bottom:0,x:e.clientX>=q.left&&e.clientX<=q.right}}).filter(o=>o.x);
+ const tol=r.filter(o=>o.dy<=10).length>1?3:10,c=r.filter(o=>o.dy<=tol).sort((a,b)=>a.dy-b.dy);return c[0]?c[0].b:null}
+hrs.addEventListener('pointermove',e=>{if(dr||e.pointerType!=='mouse')return;
+ const b=hit(e);let k=null,kind=null;
+ if(b){if(b.getBoundingClientRect().height<40){k=b.dataset.k;kind='b'}}
+ else{const n=$('#tgb .now');if(n){const q=n.getBoundingClientRect();if(Math.abs(e.clientY-q.top)<=8&&e.clientX>=q.left&&e.clientX<=q.right){k='now';kind='n'}}}
+ if(k===hv.k)return;hideHv();if(!k)return;hv.k=k;hv.t=setTimeout(()=>kind==='b'?showBlk(b,e.clientX):showNow(),kind==='b'?200:600)});
+hrs.addEventListener('pointerleave',()=>{if(!dr)hideHv()});
+/* blocks: day data, goals, timetable */
+function dayBlocks(s){const o=[];
+ on(s).forEach(e=>{if(e.all)return;const a=tm(e.start);o.push({k:'e:'+e.id,t:e.title,s:a,d:Math.max(15,tm(e.end)-a),c:e.prep?TC.Prep:(TC[e.type]||TC.Work)})});
+ routineOn(s).forEach(r=>o.push({k:'r:'+r.id+(r.x?'b':'a'),t:r.t,s:r.s,d:r.e-r.s,c:RC[r.cat]||RC.Other}));
+ goalOn(s,busyOn(s)).forEach(x=>o.push(x));
+ o.forEach(b=>{b.o=b.s;b.od=b.d;const v=ovr[b.k+'|'+s];if(v!==undefined){if(typeof v==='number')b.s=v;else{b.s=v.s;b.d=v.d}}});return o}
+function goalOn(s,b0){const out=[],b=b0.slice(),dow=par(s).getDay();
+ goals.forEach(g=>{if(s<g.from)return;const ds=goalDays(g),i=ds.indexOf(dow);if(i<0)return;
+  let st=(g.fixed&&g.fixed[i]!==undefined)?g.fixed[i]:-1;
+  if(st<0){const w=WIN[g.pref]||WIN.Any;st=findSlot(b,g.mins,w[0],w[1]);if(st<0)st=findSlot(b,g.mins,360,1320)}if(st<0)return;
+  b.push([st,st+g.mins]);const lb=g.labels&&g.labels.length?g.labels[i%g.labels.length]:'';
+  out.push({k:'g:'+g.id+':'+i,t:lb||g.title,sub:lb?g.title:'',s:st,d:g.mins,c:g.color})});return out}
+function ttR(){hideHv();
+ $('#ttt').textContent=par(ttd).toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'});
+ const l=on(ttd);$('#ad').className='pr';
+ $('#ad').innerHTML=rem(ttd).map(m=>`<span class='chip' style='background:rgba(255,170,0,.22);color:var(--ink)'>${esc(m)}</span>`).join('')+l.filter(e=>e.all).map(e=>`<span class='chip' style='background:rgba(${TC[e.type]||TC.Work},.22);color:var(--ink)'>${esc(e.title)} (all day)</span>`).join('');
+ const H=Math.max(19*21,innerHeight-300),bl=dayBlocks(ttd);layout(bl);
+ let h=`<div class='tg' style='height:${H}px'>`;
+ for(let k=5;k<=24;k++){h+=`<div class='tgl' style='top:${(k*60-300)/11.4}%'><span>${k===24?'12 AM':t12(k+':00').replace(':00','')}</span></div>`}
+ h+="<div class='tgb' id='tgb'>";
+ bl.forEach(b=>{const s=Math.max(300,b.s),e=Math.min(1440,b.s+b.d);if(e<=300||s>=1440)return;const z=rzK===b.k;
+  h+=`<div class='blk${z?' rz':''}' data-k='${esc(b.k)}' data-s='${b.s}' data-d='${b.d}' data-o='${b.o}' data-od='${b.od}' style='--bc:${b.c};top:${(s-300)/11.4}%;height:${(e-s)/11.4}%;left:${b.c0*100/b.n}%;width:${100/b.n-1}%'><b>${esc(b.t)}</b><small>${t12m(b.s)} to ${t12m(b.s+b.d)}${b.sub?' \u00b7 '+esc(b.sub):''}</small>${z?"<i class='hd t'></i><i class='hd b'></i>":''}</div>`});
+ if(ttd===todayS){const n=new Date(),m=n.getHours()*60+n.getMinutes();if(m>=300)h+=`<div class='now' style='top:${(m-300)/11.4}%'></div>`}
+ h+="</div></div><div class='lgd'>"+[['Work',TC.Work],['Birthdays',TC.Birthdays],['Personal',TC.Personal],['Reminder',TC.Reminder],['Prep',TC.Prep],['Routine',RC.College],['Goals',GP[0]]].map(x=>`<span><i style='--bc:${x[1]}'></i>${x[0]}</span>`).join('')+'</div>';
+ hrs.innerHTML=h}
+/* drag, resize (double tap), repeat detection */
+hrs.addEventListener('pointerdown',e=>{hideHv();const h=e.target.closest('.hd'),b=e.target.closest('.blk');
+ if(!b){if(rzK){rzK=null;ttR()}return}
+ if(+b.dataset.s<300)return;
+ dr={b,k:b.dataset.k,y:e.clientY,s0:+b.dataset.s,d0:+b.dataset.d,o:+b.dataset.o,od:+b.dataset.od,H:$('#tgb').getBoundingClientRect().height,s:+b.dataset.s,d:+b.dataset.d,mv:false,mode:h?(h.classList.contains('t')?'t':'b'):'m'};
+ b.setPointerCapture(e.pointerId)});
+hrs.addEventListener('pointermove',e=>{if(!dr)return;const dy=e.clientY-dr.y;if(Math.abs(dy)>4)dr.mv=true;if(!dr.mv)return;dr.b.classList.add('drag');
+ const dm=Math.round(dy/dr.H*1140/15)*15;let s=dr.s0,d=dr.d0;
+ if(dr.mode==='m')s=Math.max(300,Math.min(1440-d,s+dm));
+ else if(dr.mode==='t'){const en=s+d;s=Math.max(300,Math.min(en-15,s+dm));d=en-s}
+ else d=Math.max(15,Math.min(1440-s,d+dm));
+ dr.s=s;dr.d=d;dr.b.style.top=(s-300)/11.4+'%';dr.b.style.height=d/11.4+'%';dr.b.querySelector('small').textContent=t12m(s)+' to '+t12m(s+d)});
+const dUp=e=>{if(!dr)return;const x=dr;dr=null;
+ if(x.mv){x.rect=x.b.getBoundingClientRect();x.title=x.b.querySelector('b').textContent;x.col=x.b.style.getPropertyValue('--bc');
+  ovr[x.k+'|'+ttd]={s:x.s,d:x.d};sv('rc_ov',ovr);ttR();logMv(x);return}
+ if(x.mode!=='m')return;const now=Date.now();
+ if(lastTap.k===x.k&&now-lastTap.t<350){rzK=rzK===x.k?null:x.k;lastTap={k:null,t:0};ttR();return}
+ lastTap={k:x.k,t:now};if(e.pointerType!=='mouse'&&x.b.getBoundingClientRect().height<40){showBlk(x.b,x.b.getBoundingClientRect().left);hv.k=x.k;hv.t=setTimeout(hideHv,2500)}};
+hrs.addEventListener('pointerup',dUp);hrs.addEventListener('pointercancel',dUp);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&rzK){rzK=null;ttR()}});
+$('#ttr').onclick=()=>{Object.keys(ovr).forEach(k=>{if(k.endsWith('|'+ttd))delete ovr[k]});Object.keys(mvlog).forEach(k=>{delete mvlog[k][ttd]});sv('rc_ov',ovr);sv('rc_mv',mvlog);rzK=null;ttR()};
+function streak(ik,date,kind){const L=mvlog[ik]||{},sh=n=>{const d=par(date);d.setDate(d.getDate()+n);return iso(d)},f=kind==='move'?'s':'d',
+ ok=dd=>{const v=L[dd];return v&&(kind==='move'?v.s!==v.o:v.d!==v.od)};
+ for(const a of [-2,-1,0]){const ds=[0,1,2].map(i=>sh(a+i));if(ds.every(ok)){const v=ds.map(dd=>L[dd][f]);if(Math.max(...v)-Math.min(...v)<=30)return true}}return false}
+function logMv(x){let ik=x.k;
+ if(ik[0]==='r'){if(ik.endsWith('b'))return;ik=ik.slice(0,-1);const r=routine.find(e=>e.id===+ik.split(':')[1]);if(!r||tm(r.end)<=tm(r.start))return}
+ if(ik[0]==='e'){const ev=evs.find(e=>e.id===+ik.split(':')[1]);if(!ev||ev.prep)return}
+ const L=mvlog[ik]=mvlog[ik]||{};L[ttd]={s:x.s,d:x.d,o:x.o,od:x.od};sv('rc_mv',mvlog);
+ for(const kind of ['move','resize']){if(((kind==='move'&&x.s!==x.o)||(kind==='resize'&&x.d!==x.od))&&streak(ik,ttd,kind)){askPerm(x,ik,kind);break}}}
+function askPerm(x,ik,kind){const a=asked[ik+kind],ts=Date.now();if(a&&ts-a<6048e5)return;asked[ik+kind]=ts;sv('rc_ask',asked);
+ const msg=kind==='move'?`You have moved <b>${esc(x.title)}</b> to ${t12m(x.s)} three days in a row. Make this its new time permanently?`:`You have changed <b>${esc(x.title)}</b> to ${x.d} minutes three days in a row. Make this its new length permanently?`,
+ el=$('#dlg'),r=x.rect,sx=r.left+r.width/2,sy=r.top+r.height/2;
+ put(el,`<div style='font-weight:700;margin-bottom:6px'>Make it permanent?</div><div>${msg}</div><div class='row' style='justify-content:flex-end;margin-top:12px;gap:8px'><button class='btn glass sm' id='pm-no'>Not now</button><button class='btn glass sm' id='pm-yes' style='font-weight:800'>Yes, make it permanent</button></div>`,x.col,0,0,true);genIn(el,sx,sy);
+ $('#pm-no').onclick=()=>genOut(el,sx,sy);$('#pm-yes').onclick=()=>genOut(el,sx,sy,()=>applyPerm(ik,kind,x))}
+function applyPerm(ik,kind,x){const s=x.s,d=x.d,id=+ik.split(':')[1];
+ if(ik[0]==='e'){const ev=evs.find(e=>e.id===id);if(ev){const dur=tm(ev.end)-tm(ev.start);ev.start=hm(s);ev.end=hm(Math.min(1439,s+(kind==='resize'?d:dur)))}}
+ else if(ik[0]==='r'){const r=routine.find(e=>e.id===id);if(r){const dur=((tm(r.end)-tm(r.start))+1440)%1440||1440,nd=kind==='resize'?d:dur;r.start=hm(s);r.end=hm((s+nd)%1440)}}
+ else{const g=goals.find(e=>e.id===id);if(g){const i=+ik.split(':')[2];g.fixed=g.fixed||{};g.fixed[i]=s;if(kind==='resize')g.mins=d}}
+ Object.keys(ovr).forEach(k=>{if(k.startsWith(ik+'|')||k.startsWith(ik+'a|')||k.startsWith(ik+'b|'))delete ovr[k]});delete mvlog[ik];
+ sv('rc_ev',evs);sv('rc_rt',routine);sv('rc_goals',goals);sv('rc_ov',ovr);sv('rc_mv',mvlog);rtR();glR();calR();ttR()}
+/* editable scores */
+function evH2(e,del){let h=evHtml(e,del);const c=e.prep?TC.Prep:(TC[e.type]||TC.Work);
+ h=h.replace("<span class='chip'>"+esc(e.type)+"</span>","<span class='chip' style='background:rgba("+c+",.22);color:var(--ink);border:1px solid rgba("+c+",.8)'>"+esc(e.type)+"</span>");
+ if(e.tri&&e.tri.man)h=h.replace('Prep effort '+e.tri.e+'/5</span>','Prep effort '+e.tri.e+"/5</span><span class='chip'>Set by you</span>");
+ if(del&&!e.prep)h=h.replace(DB,(e.tri&&e.tri.u?"<button class='btn glass' style='margin-top:8px;margin-right:6px;padding:5px 12px;font-size:12px' data-sc='"+e.id+"'>Adjust scores</button>":'')+"<button class='btn glass' style='margin-top:8px;margin-right:6px;padding:5px 12px;font-size:12px' data-ed='"+e.id+"'>Edit</button>"+DB);return h}
+$('#evl').onclick=e=>{const b=e.target.closest('[data-del]'),r=e.target.closest('[data-re]'),d=e.target.closest('[data-ed]'),c=e.target.closest('[data-sc]');
+ if(b){const id=+b.dataset.del;evs=evs.filter(x=>x.id!==id&&x.parent!==id);sv('rc_ev',evs);calR()}
+ else if(r){const ev=evs.find(x=>x.id===+r.dataset.re);if(ev)triage(ev)}
+ else if(d)editEv(+d.dataset.ed);else if(c)openSc(+c.dataset.sc)};
+let scId=null;
+function openSc(id){const e=evs.find(x=>x.id===id);if(!e||!e.tri||!e.tri.u)return;scId=id;
+ [['u','#sc-u'],['i','#sc-i'],['e','#sc-e']].forEach(a=>$$(a[1]+' .btn').forEach(b=>b.classList.toggle('on',+b.textContent===e.tri[a[0]])));$('#sk').classList.add('on')}
+['#sc-u','#sc-i','#sc-e'].forEach(seg);
+const skx=()=>$('#sk').classList.remove('on');$('#sk-x').onclick=skx;$('#sk').onclick=e=>{if(e.target.id==='sk')skx()};
+const sc=id=>{const b=$(id+' .on');return b?+b.textContent:3};
+$('#sk-sv').onclick=()=>{const ev=evs.find(x=>x.id===scId);if(!ev)return;ev.man={u:sc('#sc-u'),i:sc('#sc-i'),e:sc('#sc-e')};
+ ev.tri=Object.assign({},ev.tri,{u:ev.man.u,i:ev.man.i,e:ev.man.e,man:1});sv('rc_ev',evs);skx();calR();triage(ev)};
+$('#sk-ai').onclick=()=>{const ev=evs.find(x=>x.id===scId);if(!ev)return;delete ev.man;skx();triage(ev)};
+/* goals: optional session names */
+seg('#g-nm');
+function resetG(){editG=null;$('#g-t').value='';$('#g-n').value='';$('#g-f').value=3;$('#g-m').value=60;$$('#g-d .on').forEach(b=>b.classList.remove('on'));$$('#g-p .btn').forEach((b,i)=>b.classList.toggle('on',i===0));$$('#g-nm .btn').forEach((b,i)=>b.classList.toggle('on',i===0));$$('#g-c .sw').forEach((b,i)=>b.classList.toggle('on',i===goals.length%GP.length));$('#g-add').textContent='Add Goal';$('#g-x').hidden=true}
+$('#g-x').onclick=resetG;
+$('#p4').addEventListener('click',e=>{const ge=e.target.closest('[data-ge]');if(ge){const g=goals.find(x=>x.id===+ge.dataset.ge);if(g)$$('#g-nm .btn').forEach(b=>b.classList.toggle('on',b.textContent===(g.names||'Auto')))}});
+$('#g-add').onclick=async()=>{const t=$('#g-t').value.trim();if(!t){$('#g-t').focus();return}
+ const g={id:editG||Date.now(),title:t,color:$('#g-c .sw.on').dataset.c,details:$('#g-n').value.trim(),freq:Math.min(7,Math.max(1,+$('#g-f').value||3)),mins:Math.min(240,Math.max(10,+$('#g-m').value||60)),pref:$('#g-p .on').textContent,names:$('#g-nm .on').textContent,days:$$('#g-d .on').map(b=>+b.dataset.v),from:todayS,labels:[]};
+ const old=goals.find(x=>x.id===g.id);if(old){g.from=old.from;g.fixed=old.fixed;g.labels=g.names==='Never'?[]:(old.labels||[]);goals=goals.map(x=>x.id===g.id?g:x)}else goals.push(g);
+ resetG();sv('rc_goals',goals);glR();ttR();if(g.names==='Never')return;
+ const n=goalDays(g).length,r=await ai('A user has a long term goal: '+t+'. Details: '+(g.details||'none')+'. They do '+n+' sessions per week. '+(g.names==='Auto'?'Decide whether naming each session adds value: yes for structured training or practice such as gym, running, studying or learning an instrument; no for open-ended goals such as spending time with family or friends or being outdoors, where you must not invent activities. If no, return an empty array []. ':'')+'If yes, return a JSON array of exactly '+n+' short session labels (max 4 words each) based only on the details the user gave, for example for a gym goal: Push day, Pull day, Legs.');
+ if(Array.isArray(r)){g.labels=r.map(x=>String(x).slice(0,40));sv('rc_goals',goals);glR();ttR()}};
+/* mic level meter */
+function pulse(){if(!au||!au.mobile)return;$('#orb').style.setProperty('--lv',.55+Math.random()*.45);clearTimeout(au.t);au.t=setTimeout(()=>$('#orb').style.setProperty('--lv',.1),220)}
+async function meterStart(){const o=$('#orb'),tk=++mtok;o.classList.add('meter');o.style.setProperty('--lv',.1);
+ try{if(matchMedia('(pointer:coarse)').matches){au={mobile:true,t:0};return}
+  const ms=await navigator.mediaDevices.getUserMedia({audio:true});
+  if(tk!==mtok||!rec){ms.getTracks().forEach(t=>t.stop());return}
+  const ac=new (window.AudioContext||window.webkitAudioContext)(),an=ac.createAnalyser(),buf=new Uint8Array(512);an.fftSize=512;ac.createMediaStreamSource(ms).connect(an);au={ms,ac};
+  const loop=()=>{if(!au||au.ms!==ms)return;an.getByteTimeDomainData(buf);let sum=0;for(let i=0;i<buf.length;i++){const v=(buf[i]-128)/128;sum+=v*v}o.style.setProperty('--lv',Math.min(1,Math.sqrt(sum/buf.length)*5).toFixed(3));au.raf=requestAnimationFrame(loop)};loop()}
+ catch(x){au=null}}
+function meterStop(){mtok++;if(au){cancelAnimationFrame(au.raf);if(au.ms)au.ms.getTracks().forEach(t=>t.stop());if(au.ac)au.ac.close();au=null}const o=$('#orb');o.classList.remove('meter');o.style.setProperty('--lv',0)}
+calR();ttR();glR();
 </script></body></html>
