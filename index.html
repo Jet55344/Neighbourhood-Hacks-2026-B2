@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ramble Calendar</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ctext y='8' font-size='8'%3E%F0%9F%8E%99%3C/text%3E%3C/svg%3E">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);--bg1:#f7f6f1;--bg2:#ecebe4;--ink:#101828;--mut:#5b6678;--g1:rgba(255,255,255,.62);--g2:rgba(255,255,255,.2);--gb:rgba(255,255,255,.75);--hi:rgba(255,255,255,.95);--sh:rgba(40,60,100,.14);--blue:#0a6cff;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#12151c;--bg2:#0c0e13;--ink:#f2f4f8;--mut:#9aa6ba;--g1:rgba(255,255,255,.16);--g2:rgba(255,255,255,.05);--gb:rgba(255,255,255,.25);--hi:rgba(255,255,255,.4);--sh:rgba(0,0,0,.4);color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg1)}
+.blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.6;z-index:0;pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
+.b1{width:340px;height:340px;background:#8fd3ff;left:6%;top:8%}.b2{width:300px;height:300px;background:#a6efc9;right:6%;bottom:10%;animation-delay:-6s}.b3{width:240px;height:240px;background:#ffb3c1;left:40%;top:55%;opacity:.35;animation-delay:-11s}
+@keyframes drift{to{transform:translate(60px,-40px) scale(1.15)}}
+.glass{background:linear-gradient(135deg,var(--g1),var(--g2));backdrop-filter:blur(22px) saturate(190%);-webkit-backdrop-filter:blur(22px) saturate(190%);border:1px solid var(--gb);box-shadow:inset 0 1.5px 1px var(--hi),inset 0 -1px 2px rgba(255,255,255,.25),0 10px 34px var(--sh)}
+.btn{font:600 13px inherit;font-family:inherit;color:var(--ink);cursor:pointer;border-radius:999px;padding:9px 16px;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+.btn:hover{transform:translateY(-1px) scale(1.04)}.btn:active{transform:scale(.95)}
+.ic{width:40px;height:40px;padding:0;display:inline-grid;place-items:center}
+.ic svg{width:18px;height:18px}
+svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pri{background:linear-gradient(180deg,rgba(70,150,255,.9),rgba(10,108,255,.75));color:#fff;border-color:rgba(255,255,255,.55);box-shadow:inset 0 1.5px 1px rgba(255,255,255,.7),0 6px 22px rgba(10,108,255,.4)}
+main{position:relative;z-index:1;padding:20px 16px 130px;max-width:1180px;margin:0 auto}
+.page{display:none;animation:in .45s cubic-bezier(.22,1,.36,1)}.page.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(14px) scale(.985)}}
+.card{border-radius:28px;padding:22px}
+h1,h2{margin:0}h1{font-size:28px;letter-spacing:-.02em}h2{font-size:18px}
+.mut{color:var(--mut)}.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
+/* calendar */
+.cal{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:20px;align-items:start}
+.dow,.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.dow{margin:18px 0 8px;font-size:11px;font-weight:700;color:var(--mut);text-align:center;letter-spacing:.06em}
+.cell{min-height:74px;border-radius:18px;padding:9px 10px;cursor:pointer;font-weight:700;font-size:13px;position:relative;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.cell:hover{transform:scale(1.05)}.cell.o{opacity:.45}.cell.sel{outline:2px solid var(--blue);outline-offset:-2px}
+.cell .n{display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:99px}
+.cell.today .n{background:var(--blue);color:#fff}
+.bdg{position:absolute;right:8px;top:9px;font-size:11px;background:rgba(10,108,255,.18);color:var(--blue);border-radius:99px;padding:2px 7px}
+.ev{border-radius:18px;padding:12px 14px;margin-top:10px;font-size:13px}
+.chip{font-size:11px;font-weight:700;border-radius:99px;padding:2px 9px;background:rgba(10,108,255,.15);color:var(--blue)}
+.empty{text-align:center;padding:22px 12px;margin-top:12px;border-radius:20px}
+.empty svg{width:28px;height:28px;color:var(--mut)}
+/* search */
+.sbox{max-width:640px;margin:14vh auto 0;border-radius:30px;padding:14px 14px 14px 24px}
+.sbox input{flex:1;min-width:0;background:none;border:0;outline:0;font:500 16px inherit;font-family:inherit;color:var(--ink);padding:10px 0}
+.res{max-width:640px;margin:20px auto 0}
+/* ramble */
+.rtop{min-height:calc(100vh - 170px);display:flex;flex-direction:column;align-items:center;text-align:center}
+.orb{--c:40,210,150;width:132px;height:132px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85);cursor:pointer;margin:40px 0 18px;position:relative;display:grid;place-items:center;color:rgb(var(--c));
+background:radial-gradient(circle at 50% 118%,rgba(var(--c),.75),rgba(var(--c),0) 62%),radial-gradient(circle at 28% 22%,rgba(255,255,255,.7),rgba(255,255,255,0) 40%),rgba(255,255,255,.08);
+backdrop-filter:blur(8px) saturate(220%) brightness(1.08);-webkit-backdrop-filter:blur(8px) saturate(220%) brightness(1.08);
+box-shadow:inset 0 3px 6px rgba(255,255,255,.95),inset 0 -14px 26px rgba(var(--c),.4),inset 10px 0 18px rgba(255,255,255,.18),0 0 60px rgba(var(--c),.45),0 18px 40px rgba(0,0,0,.1);transition:--c .3s,box-shadow .4s,transform .3s cubic-bezier(.34,1.56,.64,1)}
+.orb::before{content:"";position:absolute;left:18%;right:18%;top:5%;height:30%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,0));opacity:.8}
+.orb::after{content:"";position:absolute;left:30%;right:30%;bottom:6%;height:14%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.7),transparent 70%);filter:blur(2px)}
+.orb svg{width:44px;height:44px;stroke-width:2;position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(255,255,255,.7))}
+.orb:hover{transform:scale(1.06)}.orb:active{transform:scale(.94)}
+.orb.rec{--c:255,69,69;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+.live{width:min(640px,100%);min-height:130px;border-radius:24px;padding:16px 18px;text-align:left;font-size:15px;line-height:1.55;white-space:pre-wrap}
+.note{border-radius:22px;padding:16px 18px;margin-top:12px}.note p{margin:8px 0 0;line-height:1.55;font-size:14px}
+.notes{max-width:760px;margin:0 auto}
+/* timetable */
+.tt{max-width:780px;margin:0 auto}
+.hr{display:grid;grid-template-columns:78px 1fr;gap:10px;border-radius:16px;padding:10px 12px;margin-top:8px;min-height:54px}
+.hr .t{font:600 11px ui-monospace,Menlo,monospace;color:var(--mut);padding-top:4px;border-right:1px solid var(--gb)}
+.tb{border-radius:12px;padding:7px 11px;margin-bottom:4px;font-size:13px;background:rgba(10,108,255,.16);border:1px solid rgba(10,108,255,.3)}
+/* nav */
+nav{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;display:flex;padding:6px;border-radius:999px;gap:2px}
+nav button{position:relative;z-index:1;width:62px;height:46px;border:0;background:none;border-radius:99px;cursor:pointer;color:var(--mut);display:grid;place-items:center;transition:color .3s}
+nav button.on{color:var(--blue)}nav svg{width:21px;height:21px}
+#ind{position:absolute;left:6px;top:6px;width:62px;height:46px;border-radius:99px;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(160,205,255,.35));border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1.5px 1px #fff,0 4px 16px rgba(10,108,255,.28);transition:transform .6s cubic-bezier(.3,1.5,.5,1),width .35s cubic-bezier(.3,1.4,.5,1)}
+/* modal */
+.mask{position:fixed;inset:0;z-index:40;background:rgba(20,30,50,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;place-items:center;padding:16px}
+.mask.on{display:grid}.mask .card{width:min(440px,100%);max-height:92vh;overflow:auto;animation:in .35s cubic-bezier(.22,1,.36,1)}
+.lbl{display:block;font-size:11px;font-weight:700;color:var(--mut);letter-spacing:.06em;margin:14px 0 6px;text-transform:uppercase}
+.fld{width:100%;border-radius:14px;padding:11px 13px;font:500 14px inherit;font-family:inherit;color:var(--ink);outline:0}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg .btn{padding:7px 13px;font-size:12px}
+.seg .btn.on{background:linear-gradient(180deg,rgba(110,175,255,.8),rgba(10,108,255,.35));color:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.orb{background:radial-gradient(circle at 50% 120%,rgba(var(--c),.5),rgba(var(--c),0) 60%),radial-gradient(circle at 30% 18%,rgba(255,255,255,.6),rgba(255,255,255,0) 38%),rgba(var(--c),.05);backdrop-filter:none;-webkit-backdrop-filter:none;border:1.5px solid rgba(255,255,255,.9);box-shadow:inset 0 4px 8px rgba(255,255,255,.95),inset 0 -12px 24px rgba(var(--c),.3),inset 0 0 0 6px rgba(255,255,255,.07),0 0 50px rgba(var(--c),.4),0 16px 36px rgba(0,0,0,.08)}
+.orb::before{background:linear-gradient(180deg,#fff,rgba(255,255,255,0));opacity:.9}
+nav{background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.04));backdrop-filter:blur(10px) saturate(240%) brightness(1.1);-webkit-backdrop-filter:blur(10px) saturate(240%) brightness(1.1);border:1px solid rgba(255,255,255,.85);box-shadow:inset 0 2px 2px #fff,inset 0 -2px 4px rgba(255,255,255,.4),inset 0 0 18px rgba(255,255,255,.25),0 10px 30px rgba(40,60,100,.16)}
+nav::before{content:"";position:absolute;left:10%;right:10%;top:2px;height:45%;border-radius:99px;background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,0));pointer-events:none}
+nav::after{content:"";position:absolute;left:25%;right:25%;bottom:2px;height:12%;border-radius:99px;background:radial-gradient(ellipse,rgba(255,255,255,.6),transparent 70%);pointer-events:none}
+nav button:nth-of-type(1){--r:255,69,58}nav button:nth-of-type(2){--r:10,108,255}nav button:nth-of-type(3){--r:232,165,0}nav button:nth-of-type(4){--r:40,190,100}
+nav button{color:rgb(var(--r));opacity:.72}nav button.on{color:rgb(var(--r));opacity:1}nav svg{stroke-width:2.1}
+#ind{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(var(--ir,255,69,58),.22));box-shadow:inset 0 1.5px 1px #fff,0 4px 16px rgba(var(--ir,255,69,58),.3);transition:transform .6s cubic-bezier(.3,1.5,.5,1),width .35s cubic-bezier(.3,1.4,.5,1),background .4s,box-shadow .4s}
+.nt{margin:10px 0 0;font-size:16px;letter-spacing:-.01em}
+.pr{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.pr .chip{background:rgba(255,255,255,.4);color:var(--ink);border:1px solid var(--gb)}
+.tb.prep{background:rgba(40,190,100,.16);border:1px dashed rgba(40,190,100,.65)}.tb.rm{background:rgba(255,165,0,.16);border:1px solid rgba(255,165,0,.5)}
+.note{position:relative}.note h3{margin:0 0 2px;font-size:15px;padding-right:44px}.ibtn{position:absolute;right:12px;top:12px;width:34px;height:34px}.ibtn svg{width:16px;height:16px}
+.sum{margin-top:10px;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.5}
+@media(max-width:820px){.cal{grid-template-columns:1fr}.cell{min-height:54px;padding:6px;border-radius:14px}.dow,.grid{gap:5px}.bdg{right:4px;top:6px}.card{padding:16px}h1{font-size:22px}.sbox{margin-top:8vh}}
+</style></head><body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<main>
+<section class="page on" id="p0"><div class="cal">
+ <div class="card glass"><div class="row sp"><h1 id="mt"></h1><div class="row"><button class="btn glass ic" id="pv" aria-label="Previous month"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button class="btn glass" id="td">Today</button><button class="btn glass ic" id="nx" aria-label="Next month"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="btn pri ic" id="add" aria-label="Add event"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+ <div class="dow"><span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span></div><div class="grid" id="gr"></div></div>
+ <div class="card glass"><div class="row sp"><h2 id="dt"></h2></div><div class="row sp" style="margin-top:12px"><span class="mut" style="font-size:13px" id="cnt"></span><button class="btn glass" id="add2">+ Add to Day</button></div><div id="evl"></div></div>
+</div></section>
+<section class="page" id="p1"><div class="sbox glass row"><input id="q" placeholder="Search your voice notes" autocomplete="off" enterkeyhint="search"><button class="btn pri ic" id="sb" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div><div class="res" id="res"></div></section>
+<section class="page" id="p2"><div class="rtop"><h1>Ramble Mode</h1>
+ <button class="orb" id="orb" aria-label="Record voice note"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button>
+ <p class="mut" id="st" style="margin:0 0 18px;font-size:14px">Tap the microphone to start</p>
+ <div class="live glass" id="live" aria-live="polite"></div><p class="mut" style="font-size:13px;margin-top:26px">Scroll down to read your saved voice notes</p></div>
+ <div class="notes"><h2>Your voice notes</h2><div id="nl"></div></div></section>
+<section class="page" id="p3"><div class="tt card glass"><div class="row sp"><h1 id="ttt"></h1><div class="row"><button class="btn glass ic" id="tp" aria-label="Previous day"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button class="btn glass" id="tt0">Today</button><button class="btn glass ic" id="tn" aria-label="Next day"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div id="ad"></div><div id="hrs"></div></div></section>
+</main>
+<nav class="glass" id="nav"><span id="ind"></span>
+<button class="on" aria-label="Calendar"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></button>
+<button aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+<button aria-label="Ramble mode"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button>
+<button aria-label="Timetable"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></svg></button></nav>
+<div class="mask" id="mk"><div class="card glass"><div class="row sp"><h2>Schedule New Event</h2><button class="btn glass ic" id="cl" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<label class="lbl">Event title</label><input class="fld glass" id="f-t" placeholder="Eg: Meeting, Project, etc.">
+<label class="lbl">Date</label><input class="fld glass" id="f-d" type="date">
+<label class="lbl">Event type</label><div class="seg" id="s-ty"><button class="btn glass on">Work</button><button class="btn glass">Birthdays</button><button class="btn glass">Personal</button><button class="btn glass">Reminder</button></div>
+<label class="lbl">Recurring schedule</label><div class="seg" id="s-rc"><button class="btn glass on">One-time</button><button class="btn glass">Daily</button><button class="btn glass">Weekly</button><button class="btn glass">Monthly</button><button class="btn glass">Yearly</button></div>
+<label class="lbl">Time slot</label><div class="seg" id="s-tm"><button class="btn glass on">Specific Hours</button><button class="btn glass">All Day</button></div>
+<div class="two" id="hrsf"><div><label class="lbl">Start hour</label><input class="fld glass" id="f-s" type="time" value="09:00"></div><div><label class="lbl">End hour</label><input class="fld glass" id="f-e" type="time" value="10:30"></div></div>
+<label class="lbl">Notes / details</label><textarea class="fld glass" id="f-n" rows="2" placeholder="Add location, gift ideas, or agenda..."></textarea>
+<label class="lbl">Attach files (PDF, Word, text)</label><input class="fld glass" id="f-f" type="file" accept=".pdf,.docx,.txt,.md,.csv" multiple>
+<div class="row" style="justify-content:flex-end;margin-top:18px"><button class="btn glass" id="cn">Cancel</button><button class="btn pri" id="sv">Save Event to Calendar</button></div></div></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let evs=ld('rc_ev',[]),notes=ld('rc_notes',[]);
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const par=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const t12=t=>{const[h,m]=t.split(':').map(Number);return(h%12||12)+':'+String(m).padStart(2,'0')+' '+(h<12?'AM':'PM')};
+const todayS=iso(new Date());let sel=todayS,mon=par(todayS),ttd=todayS;mon.setDate(1);
+const occ=(e,s)=>{if(s<e.date)return false;const a=par(e.date),b=par(s);
+ if(e.rec==='One-time')return s===e.date;if(e.rec==='Daily')return true;
+ if(e.rec==='Weekly')return a.getDay()===b.getDay();if(e.rec==='Monthly')return a.getDate()===b.getDate();
+ return a.getMonth()===b.getMonth()&&a.getDate()===b.getDate()};
+const on=s=>evs.filter(e=>occ(e,s)).sort((a,b)=>(b.all-a.all)||(a.start||'').localeCompare(b.start||''));
+const lt=s=>par(s).toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'});
+function evHtml(e,del){return `<div class="ev glass"><div class="row sp"><b>${esc(e.title)}</b><span class="chip">${esc(e.type)}</span></div><div class="mut" style="margin-top:4px">${e.all?'All day':t12(e.start)+' to '+t12(e.end)}${e.rec!=='One-time'?' · '+e.rec:''}</div>${e.notes?`<div style="margin-top:6px">${esc(e.notes)}</div>`:''}${del?`<button class="btn glass" style="margin-top:8px;padding:5px 12px;font-size:12px" data-del="${e.id}">Delete</button>`:''}</div>`}
+function calR(){
+ $('#mt').textContent=mon.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+ const st=new Date(mon);st.setDate(1-mon.getDay());let h='';
+ for(let i=0;i<42;i++){const d=new Date(st);d.setDate(st.getDate()+i);const s=iso(d),n=on(s).length;
+  h+=`<div class="cell glass${d.getMonth()!==mon.getMonth()?' o':''}${s===sel?' sel':''}${s===todayS?' today':''}" data-d="${s}"><span class="n">${d.getDate()}</span>${n?`<span class="bdg">${n}</span>`:''}</div>`}
+ $('#gr').innerHTML=h;
+ const l=on(sel);$('#dt').textContent=lt(sel);$('#cnt').textContent=l.length+' event(s) scheduled';
+ $('#evl').innerHTML=l.length?l.map(e=>evHtml(e,1)).join(''):`<div class="empty glass"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><p style="margin:8px 0 4px"><b>No events on this day</b></p><span class="mut" style="font-size:12px">Use the + button to schedule an event, birthday, or recurring reminder.</span></div>`}
+function ttR(){
+ $('#ttt').textContent=par(ttd).toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'});
+ const l=on(ttd);$('#ad').innerHTML=l.filter(e=>e.all).map(e=>`<div class="tb" style="margin-top:12px"><b>${esc(e.title)}</b> · All day</div>`).join('');
+ let h='';for(let H=5;H<=24;H++){const hs=l.filter(e=>!e.all&&Math.min(24,Math.max(5,+e.start.split(':')[0]||24))===H);
+  h+=`<div class="hr glass"><div class="t">${H===24?'12:00 AM':t12(H+':00')}</div><div>${hs.map(e=>`<div class="tb"><b>${esc(e.title)}</b> <span class="mut">${t12(e.start)} to ${t12(e.end)}</span></div>`).join('')}</div></div>`}
+ $('#hrs').innerHTML=h}
+/* nav */
+let cur=0;const bs=$$('nav button'),ind=$('#ind');
+function go(i){if(i===cur)return;cur=i;bs.forEach((b,j)=>b.classList.toggle('on',j===i));
+ ind.style.width='84px';ind.style.setProperty('--ir',['255,69,58','10,108,255','232,165,0','40,190,100'][i]);ind.style.transform=`translateX(${i*64}px)`;setTimeout(()=>ind.style.width='62px',260);
+ $$('.page').forEach((p,j)=>p.classList.toggle('on',j===i));scrollTo({top:0});if(i===3){ttd=sel;ttR()}if(i===2){notesR();titleAll()}}
+bs.forEach((b,i)=>b.onclick=()=>go(i));
+$('#pv').onclick=()=>{mon.setMonth(mon.getMonth()-1);calR()};$('#nx').onclick=()=>{mon.setMonth(mon.getMonth()+1);calR()};
+$('#td').onclick=()=>{sel=todayS;mon=par(todayS);mon.setDate(1);calR()};
+$('#gr').onclick=e=>{const c=e.target.closest('.cell');if(!c)return;sel=c.dataset.d;const d=par(sel);if(d.getMonth()!==mon.getMonth()){mon=new Date(d.getFullYear(),d.getMonth(),1)}calR()};
+$('#evl').onclick=e=>{const id=e.target.dataset.del;if(id){evs=evs.filter(x=>x.id!=id);sv('rc_ev',evs);calR()}};
+const shift=n=>{const d=par(ttd);d.setDate(d.getDate()+n);ttd=iso(d);ttR()};
+$('#tp').onclick=()=>shift(-1);$('#tn').onclick=()=>shift(1);$('#tt0').onclick=()=>{ttd=todayS;ttR()};
+/* modal */
+const seg=(id)=>{$(id).onclick=e=>{if(e.target.tagName!=='BUTTON')return;$$(id+' .btn').forEach(b=>b.classList.remove('on'));e.target.classList.add('on');if(id==='#s-tm')$('#hrsf').style.display=e.target.textContent==='All Day'?'none':'grid'}};
+['#s-ty','#s-rc','#s-tm'].forEach(seg);
+const val=id=>$(id+' .on').textContent;
+function open(d){$('#f-d').value=d;$('#mk').classList.add('on');$('#f-t').focus()}
+const shut=()=>$('#mk').classList.remove('on');
+$('#add').onclick=()=>open(sel);$('#add2').onclick=()=>open(sel);$('#cl').onclick=shut;$('#cn').onclick=shut;
+$('#mk').onclick=e=>{if(e.target.id==='mk')shut()};
+$('#sv').onclick=()=>{const t=$('#f-t').value.trim();if(!t){$('#f-t').focus();return}
+ const all=val('#s-tm')==='All Day',s=$('#f-s').value||'09:00',e=$('#f-e').value||'10:00';
+ if(!all&&e<=s){$('#f-e').focus();return}
+ evs.push({id:Date.now(),title:t,date:$('#f-d').value||sel,type:val('#s-ty'),rec:val('#s-rc'),all,start:s,end:e,notes:$('#f-n').value.trim()});
+ sv('rc_ev',evs);$('#f-t').value='';$('#f-n').value='';shut();sel=evs[evs.length-1].date;mon=par(sel);mon.setDate(1);calR()};
+/* voice notes */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,fin='',itm='',manual=false;
+const lv=$('#live'),orb=$('#orb'),st=$('#st');
+const draw=()=>{lv.textContent=(fin+itm)||'Your words will appear here as you speak.';lv.style.opacity=(fin+itm)?1:.55};draw();
+let err='',starting=false;function finish(){const t=(fin+itm).trim();orb.classList.remove('rec');st.textContent=err||'Tap the microphone to start';err='';
+ if(t){notes.unshift({id:Date.now(),ts:Date.now(),text:t});sv('rc_notes',notes);st.textContent='Voice note saved';notesR();titleAll()}fin='';itm='';rec=null}
+orb.onclick=async()=>{if(starting)return;
+ if(rec){manual=true;rec.stop();return}
+ if(!SR){st.textContent='Live transcription is not supported in this browser. Try Chrome or Safari.';return}
+ fin='';itm='';manual=false;draw();
+ const go=()=>{const r=new SR();r.continuous=true;r.interimResults=true;r.lang=navigator.language||'en-US';
+  r.onresult=e=>{itm='';for(let i=e.resultIndex;i<e.results.length;i++){const x=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=x.trim()+' ';else itm+=x}draw()};
+  r.onerror=e=>{if(e.error==='no-speech'||e.error==='aborted')return;manual=true;err=(e.error==='not-allowed'||e.error==='service-not-allowed')?'Microphone or speech access is blocked. Allow it in your browser settings, or open the page in its own tab.':e.error==='network'?'Speech recognition needs an internet connection.':'Could not record ('+e.error+').'};
+  r.onend=()=>{if(manual||!rec){finish()}else{try{go()}catch(x){finish()}}};
+  rec=r;try{r.start()}catch(x){finish()}};
+ starting=true;st.textContent='Waiting for microphone permission...';try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const ms=await navigator.mediaDevices.getUserMedia({audio:true});ms.getTracks().forEach(t=>t.stop())}}catch(x){starting=false;st.textContent='Microphone access was denied or is blocked here. Allow it in your browser, or open the page in its own tab.';return}starting=false;go();orb.classList.add('rec');st.textContent='Recording. Tap to stop and save'};
+function notesR(){$('#nl').innerHTML=notes.length?notes.map(n=>`<div class="note glass"><div class="row sp"><span class="mut" style="font-size:12px;font-weight:600">${new Date(n.ts).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'})}</span><span class="row" style="gap:6px"><button class="btn glass" style="padding:5px 12px;font-size:12px" data-dl="${n.id}">Save .txt</button><button class="btn glass" style="padding:5px 12px;font-size:12px" data-rm="${n.id}">Delete</button></span></div><h3 class="nt">${esc(n.title||'Untitled note')}</h3><p>${esc(n.text)}</p></div>`).join(''):'<p class="mut">No voice notes yet. Record one above and it will appear here.</p>'}
+document.addEventListener('click',async e=>{const bt=e.target.closest('[data-sm]');if(bt){const s=bt.parentElement.querySelector('.sum');s.hidden=!s.hidden;return}const d=e.target.dataset;
+ if(d.rm){notes=notes.filter(n=>n.id!=d.rm);sv('rc_notes',notes);notesR();if($('#p1').classList.contains('on'))$('#res').innerHTML=''}
+ if(d.dl){const n=notes.find(x=>x.id==d.dl);try{const u=URL.createObjectURL(new Blob([n.text],{type:'text/plain'})),a=document.createElement('a');a.href=u;a.download='voice-note-'+iso(new Date(n.ts))+'-'+n.id+'.txt';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}catch(x){}}});
+/* search */
+const card=n=>`<div class="note glass"><span class="mut" style="font-size:12px;font-weight:600">${new Date(n.ts).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'})}</span><p>${esc(n.text)}</p></div>`;
+async function search(){const q=$('#q').value.trim(),R=$('#res');if(!q)return;
+ if(!notes.length){R.innerHTML='<p class="mut" style="text-align:center">You have no voice notes yet. Record one in Ramble Mode first.</p>';return}
+ R.innerHTML='<p class="mut" style="text-align:center">Searching by meaning...</p>';let hits=null;
+ try{const s=await Promise.resolve(null);if(s){const r=await s.json(`You match a search query to voice-note transcripts by meaning, not exact wording (for example "map for blind people" matches a note about accessibility maps). Query: ${JSON.stringify(q)}\nNotes: ${JSON.stringify(notes.map(n=>({id:n.id,text:n.text.slice(0,700)})))}\nReturn only a JSON array of the ids of relevant notes, best match first. Return [] if none are relevant.`);
+  if(Array.isArray(r))hits=r.map(id=>notes.find(n=>n.id==id)).filter(Boolean)}}catch(x){}
+ if(!hits){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>2);hits=notes.filter(n=>w.some(k=>n.text.toLowerCase().includes(k)));
+  R.dataset.fb='1'}
+ R.innerHTML=hits.length?hits.map(card).join(''):'<p class="mut" style="text-align:center">No matching voice notes found.</p>'}
+let tbusy=false;
+async function titleAll(){if(tbusy)return;tbusy=true;try{const s=await Promise.resolve(null);if(s){for(const n of notes.filter(x=>!x.title)){try{const r=await s(`Write a short, specific title (3 to 6 words, no quotes, no trailing punctuation, no emoji) for this voice note transcript:\n${n.text.slice(0,1500)}`);const t=(r&&r.text||'').trim().replace(/^["']+|["'.]+$/g,'').slice(0,80);if(t){n.title=t;sv('rc_notes',notes);notesR()}}catch(x){break}}}}catch(x){}tbusy=false}
+const card2=(n,i,sc)=>`<div class="note glass"><div class="row sp"><span class="chip">${i===0?'Best match':'Match '+(i+1)}${sc!=null?' · '+sc+'%':''}</span><span class="mut" style="font-size:12px;font-weight:600">${new Date(n.ts).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'})}</span></div><h3 class="nt">${esc(n.title||'Untitled note')}</h3><p>${esc(n.text)}</p></div>`;
+async function search2(){const q=$('#q').value.trim(),R=$('#res');if(!q)return;
+ if(!notes.length){R.innerHTML='<p class="mut" style="text-align:center">You have no voice notes yet. Record one in Ramble Mode first.</p>';return}
+ R.innerHTML='<p class="mut" style="text-align:center">Searching by meaning...</p>';let hits=null;
+ try{const s=await Promise.resolve(null);if(s){const r=await s.json(`You match a search query to voice-note transcripts by meaning, not exact wording (for example "map for blind people" matches a note about accessibility maps). Query: ${JSON.stringify(q)}\nNotes: ${JSON.stringify(notes.map(n=>({id:n.id,title:n.title||'',text:n.text.slice(0,700)})))}\nReturn only a JSON array of objects like {"id":123,"score":85}, where score is relevance from 0 to 100. Sort from most relevant to least relevant. Include only notes with a score of 30 or more. Return [] if none are relevant.`);
+  if(Array.isArray(r))hits=r.map(x=>({n:notes.find(n=>n.id==x.id),sc:Math.round(+x.score)})).filter(x=>x.n&&x.sc>=30).sort((a,b)=>b.sc-a.sc)}}catch(x){}
+ if(!hits){const w=q.toLowerCase().split(/\W+/).filter(x=>x.length>2);hits=notes.map(n=>{const tx=((n.title||'')+' '+n.text).toLowerCase();return{n,c:w.filter(k=>tx.includes(k)).length}}).filter(x=>x.c).sort((a,b)=>b.c-a.c).map(x=>({n:x.n,sc:null}))}
+ R.innerHTML=hits.length?hits.map((h,i)=>card2(h.n,i,h.sc)).join(''):'<p class="mut" style="text-align:center">No matching voice notes found.</p>'}
+$('#q').onkeydown=e=>{if(e.key==='Enter')search2()};$('#sb').onclick=search2;
+calR();ttR();notesR();
+</script><script>
+const NL=String.fromCharCode(10),cl=n=>Math.min(5,Math.max(1,Math.round(+n)||3));
+evs.forEach(e=>{if(e.tri==='pending')e.tri=null});
+async function ai(p){try{const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:p})});if(!r.ok)return null;const j=await r.json(),t=j.text||'',i=Math.min(...['[','{'].map(c=>t.indexOf(c)).filter(x=>x>=0)),k=Math.max(t.lastIndexOf(']'),t.lastIndexOf('}'));return JSON.parse(t.slice(i,k+1))}catch(e){return null}}
+const lib=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+async function readFile(f){const n=f.name.toLowerCase();
+ if(n.endsWith('.txt')||n.endsWith('.md')||n.endsWith('.csv'))return await f.text();
+ if(n.endsWith('.docx')){await lib('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');const z=await JSZip.loadAsync(await f.arrayBuffer());const x=await z.file('word/document.xml').async('string');return x.split('</w:p>').join(NL).replace(/<[^>]+>/g,'')}
+ if(n.endsWith('.pdf')){await lib('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const d=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let t='';for(let i=1;i<=Math.min(d.numPages,15);i++){const p=await d.getPage(i);t+=(await p.getTextContent()).items.map(s=>s.str).join(' ')+NL}return t}
+ return ''}
+/* birthday reminders (derived, not stored) */
+const rem=s=>{const o=[],d=par(s);evs.filter(e=>e.type==='Birthdays').forEach(e=>{[[7,'Gift reminder: '+e.title+' is in 1 week'],[1,'Gift reminder: '+e.title+' is tomorrow'],[0,'Today: '+e.title+'. Wish them well and give the gift']].forEach(([k,m])=>{const t=new Date(d);t.setDate(d.getDate()+k);if(occ(e,iso(t)))o.push(m)})});return o};
+function evHtml(e,del){const t=e.tri;let c='';
+ if(t==='pending')c="<div class='mut' style='margin-top:8px;font-size:12px'>Analyzing priority...</div>";
+ else if(t&&t.u)c=`<div class='pr'><span class='chip'>Urgency ${t.u}/5</span><span class='chip'>Importance ${t.i}/5</span><span class='chip'>Prep effort ${t.e}/5</span></div>${t.why?`<div class='mut' style='margin-top:6px;font-size:12px'>${esc(t.why)}</div>`:''}${t.n?`<div class='mut' style='font-size:12px;margin-top:4px'>${t.n} prep block(s) added to your timetable</div>`:''}`;
+ else if(del&&!e.parent)c=`<button class='btn glass' style='margin-top:8px;padding:5px 12px;font-size:12px' data-re='${e.id}'>Analyze priority</button>`;
+ return `<div class='ev glass'><div class='row sp'><b>${esc(e.title)}</b><span class='chip'>${esc(e.type)}</span></div><div class='mut' style='margin-top:4px'>${e.all?'All day':t12(e.start)+' to '+t12(e.end)}${e.rec!=='One-time'?' · '+e.rec:''}</div>${e.notes?`<div style='margin-top:6px'>${esc(e.notes)}</div>`:''}${e.files&&e.files.length?`<div class='mut' style='margin-top:6px;font-size:12px'>Files: ${esc(e.files.join(', '))}</div>`:''}${c}${del?`<button class='btn glass' style='margin-top:8px;padding:5px 12px;font-size:12px' data-del='${e.id}'>Delete</button>`:''}</div>`}
+function calR(){
+ $('#mt').textContent=mon.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+ const st=new Date(mon);st.setDate(1-mon.getDay());let h='';
+ for(let i=0;i<42;i++){const d=new Date(st);d.setDate(st.getDate()+i);const s=iso(d),n=on(s).length+rem(s).length;
+  h+=`<div class='cell glass${d.getMonth()!==mon.getMonth()?' o':''}${s===sel?' sel':''}${s===todayS?' today':''}' data-d='${s}'><span class='n'>${d.getDate()}</span>${n?`<span class='bdg'>${n}</span>`:''}</div>`}
+ $('#gr').innerHTML=h;
+ const l=on(sel),r=rem(sel);$('#dt').textContent=lt(sel);$('#cnt').textContent=(l.length+r.length)+' event(s) scheduled';
+ $('#evl').innerHTML=(l.length+r.length)?r.map(m=>`<div class='ev glass'><div class='row sp'><b>${esc(m)}</b><span class='chip'>Reminder</span></div></div>`).join('')+l.map(e=>evHtml(e,1)).join(''):`<div class='empty glass'><p style='margin:8px 0 4px'><b>No events on this day</b></p><span class='mut' style='font-size:12px'>Use the + button to schedule an event, birthday, or recurring reminder.</span></div>`}
+function ttR(){
+ $('#ttt').textContent=par(ttd).toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'});
+ const l=on(ttd);$('#ad').innerHTML=rem(ttd).map(m=>`<div class='tb rm' style='margin-top:12px'><b>${esc(m)}</b></div>`).join('')+l.filter(e=>e.all).map(e=>`<div class='tb' style='margin-top:12px'><b>${esc(e.title)}</b> · All day</div>`).join('');
+ let h='';for(let H=5;H<=24;H++){const hs=l.filter(e=>!e.all&&Math.min(24,Math.max(5,+e.start.split(':')[0]||24))===H);
+  h+=`<div class='hr glass'><div class='t'>${H===24?'12:00 AM':t12(H+':00')}</div><div>${hs.map(e=>`<div class='tb${e.prep?' prep':''}'><b>${esc(e.title)}</b> <span class='mut'>${t12(e.start)} to ${t12(e.end)}</span></div>`).join('')}</div></div>`}
+ $('#hrs').innerHTML=h}
+async function triage(ev){ev.tri='pending';calR();const today=iso(new Date()),busy=[];
+ for(let d=new Date();iso(d)<=ev.date&&busy.length<80;d.setDate(d.getDate()+1)){on(iso(d)).forEach(e=>{if(e.id!==ev.id)busy.push(iso(d)+' '+(e.all?'all day':e.start+'-'+e.end)+' '+e.title)})}
+ const r=await ai('Today is '+today+'. A user added this calendar event. Judge it and plan preparation.'+NL+'Title: '+ev.title+NL+'Type: '+ev.type+NL+'Date: '+ev.date+' '+(ev.all?'all day':ev.start+'-'+ev.end)+NL+'Repeats: '+ev.rec+NL+'Notes: '+(ev.notes||'none')+NL+'Attached documents: '+(ev.docText||'none')+NL+'Busy slots already scheduled: '+(busy.join('; ')||'none')+NL+NL+'Rate each from 1 to 5: urgency (how soon it needs attention given the date), importance (stakes and consequences), effort (time needed to complete or prepare). Decide whether preparation or practice sessions are genuinely needed (speech, exam, presentation, interview, deadline: yes; casual meal, routine call, birthday: no). If needed, schedule 1 to 8 focused blocks on dates from '+today+' up to the event date (blocks on the event day must end before it starts), between 05:00 and 23:00, not overlapping busy slots, with more and longer blocks for higher effort, each titled with a concrete task such as Draft outline or Rehearse out loud. If not needed return an empty blocks array. Return JSON only: {urgency:n,importance:n,effort:n,reason:one short sentence,blocks:[{date:YYYY-MM-DD,start:HH:MM,end:HH:MM,title:text}]}');
+ if(!evs.includes(ev))return;
+ if(!r||!r.urgency){ev.tri=null;sv('rc_ev',evs);calR();return}
+ ev.tri={u:cl(r.urgency),i:cl(r.importance),e:cl(r.effort),why:String(r.reason||'').slice(0,200),n:0};
+ evs=evs.filter(e=>e.parent!==ev.id);
+ if(ev.type!=='Birthdays'&&Array.isArray(r.blocks)){const ok=r.blocks.filter(b=>b&&typeof b.date==='string'&&b.date.length===10&&typeof b.start==='string'&&b.start.length===5&&typeof b.end==='string'&&b.end.length===5&&b.date>=today&&b.date<=ev.date&&b.end>b.start&&b.start>='05:00'&&b.end<='23:59'&&(b.date<ev.date||(!ev.all&&b.end<=ev.start))).slice(0,8);
+  ok.forEach((b,k)=>evs.push({id:Date.now()+k+1,title:'Prep: '+String(b.title||'Focus session').slice(0,60)+' ('+ev.title+')',date:b.date,type:'Prep',rec:'One-time',all:false,start:b.start,end:b.end,notes:'',parent:ev.id,prep:true}));ev.tri.n=ok.length}
+ sv('rc_ev',evs);calR();if($('#p3').classList.contains('on'))ttR()}
+$('#evl').onclick=e=>{const b=e.target.closest('[data-del]'),r=e.target.closest('[data-re]');
+ if(b){const id=+b.dataset.del;evs=evs.filter(x=>x.id!==id&&x.parent!==id);sv('rc_ev',evs);calR()}
+ else if(r){const ev=evs.find(x=>x.id===+r.dataset.re);if(ev)triage(ev)}};
+$('#sv').onclick=async()=>{const t=$('#f-t').value.trim();if(!t){$('#f-t').focus();return}
+ const all=val('#s-tm')==='All Day',s=$('#f-s').value||'09:00',e=$('#f-e').value||'10:00';
+ if(!all&&e<=s){$('#f-e').focus();return}
+ const btn=$('#sv');btn.textContent='Saving...';let doc='',names=[];
+ for(const f of [...$('#f-f').files]){try{const x=await readFile(f);if(x&&x.trim()){doc+=NL+'['+f.name+']'+NL+x.slice(0,4000);names.push(f.name)}}catch(x){}}
+ const ev={id:Date.now(),title:t,date:$('#f-d').value||sel,type:val('#s-ty'),rec:val('#s-rc'),all,start:s,end:e,notes:$('#f-n').value.trim(),docText:doc.slice(0,8000),files:names,tri:null};
+ evs.push(ev);sv('rc_ev',evs);$('#f-t').value='';$('#f-n').value='';$('#f-f').value='';btn.textContent='Save Event to Calendar';shut();sel=ev.date;mon=par(sel);mon.setDate(1);calR();triage(ev)};
+/* voice notes: titles and summaries */
+const nm=n=>n.title||n.text.split(' ').slice(0,6).join(' ');
+const nc=(n,a)=>`<div class='note glass'><button class='btn glass ic ibtn' data-sm='1' aria-label='Show summary'><svg viewBox='0 0 24 24'><circle cx='12' cy='12' r='9'/><path d='M12 11v5M12 8h.01'/></svg></button><h3>${esc(nm(n))}</h3><span class='mut' style='font-size:12px;font-weight:600'>${new Date(n.ts).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'})}</span><p>${esc(n.text)}</p>${a?`<div class='row' style='margin-top:10px;gap:6px'><button class='btn glass' style='padding:5px 12px;font-size:12px' data-dl='${n.id}'>Save .txt</button><button class='btn glass' style='padding:5px 12px;font-size:12px' data-rm='${n.id}'>Delete</button></div>`:''}<div class='sum glass' hidden>${esc(n.summary||'Summary not ready yet.')}</div></div>`;
+function notesR(){$('#nl').innerHTML=notes.length?notes.map(n=>nc(n,1)).join(''):"<p class='mut'>No voice notes yet. Record one above and it will appear here.</p>"}
+let metaBusy=false;async function meta(){if(metaBusy)return;metaBusy=true;
+ for(const n of notes.filter(x=>!x.title)){const r=await ai('Write a short heading (max 7 words, no quotes, no emoji) and a 1 to 3 sentence summary for this voice note transcript. Return JSON only: {title:text,summary:text}.'+NL+'Transcript: '+n.text.slice(0,3000));
+  if(r&&r.title){n.title=String(r.title).slice(0,80);n.summary=String(r.summary||'');sv('rc_notes',notes);notesR()}else break}
+ metaBusy=false}
+function finish(){const t=(fin+itm).trim();orb.classList.remove('rec');st.textContent=err||'Tap the microphone to start';err='';
+ if(t){notes.unshift({id:Date.now(),ts:Date.now(),text:t});sv('rc_notes',notes);st.textContent='Voice note saved';notesR();meta()}fin='';itm='';rec=null}
+let base='',t0=0,quick=0;
+orb.onclick=()=>{
+ if(rec){manual=true;try{rec.stop()}catch(x){finish()}return}
+ if(!SR){st.textContent='Live transcription is not supported in this browser. Try Chrome or Safari.';return}
+ fin='';itm='';base='';manual=false;err='';quick=0;draw();
+ const r=new SR();r.continuous=true;r.interimResults=true;r.lang=navigator.language||'en-US';
+ r.onresult=e=>{let f='',p='';for(let i=0;i<e.results.length;i++){const x=e.results[i][0].transcript;if(e.results[i].isFinal)f+=x.trim()+' ';else p+=x}fin=base+f;itm=p;draw()};
+ r.onerror=e=>{if(e.error==='no-speech'||e.error==='aborted')return;manual=true;err=(e.error==='not-allowed'||e.error==='service-not-allowed')?'Microphone or speech access is blocked. Check this site permission in your browser settings, or open the page in its own tab.':e.error==='network'?'Speech recognition needs an internet connection.':'Could not record ('+e.error+').'};
+ r.onend=()=>{if(itm){fin+=itm+' ';itm=''}base=fin;if(manual||rec!==r){finish();return}
+  if(Date.now()-t0<1200){if(++quick>2){err='Recording could not start. Check the microphone permission for this site.';finish();return}}else quick=0;
+  t0=Date.now();try{r.start()}catch(x){finish()}};
+ rec=r;t0=Date.now();try{r.start();orb.classList.add('rec');st.textContent='Recording. Tap to stop and save'}catch(x){rec=null;st.textContent='Could not start the microphone.'}};
+async function search(){const q=$('#q').value.trim(),R=$('#res');if(!q)return;
+ if(!notes.length){R.innerHTML="<p class='mut' style='text-align:center'>You have no voice notes yet. Record one in Ramble Mode first.</p>";return}
+ R.innerHTML="<p class='mut' style='text-align:center'>Searching by meaning...</p>";let hits=null;
+ const r=await ai('You rank voice notes against a search query by meaning, not exact wording (for example a query about a map for blind people matches a note about accessibility maps). Use each note title, summary and text. Query: '+JSON.stringify(q)+NL+'Notes: '+JSON.stringify(notes.map(n=>({id:n.id,title:n.title||'',summary:n.summary||'',text:n.text.slice(0,600)})))+NL+'Return only a JSON array of ids, most relevant first, leaving out irrelevant notes. Return [] if none are relevant.');
+ if(Array.isArray(r))hits=r.map(id=>notes.find(n=>n.id==id)).filter(Boolean);
+ if(!hits){const w=q.toLowerCase().split(' ').filter(x=>x.length>2),sc=n=>{const h=(nm(n)+' '+(n.summary||'')+' '+n.text).toLowerCase();return w.filter(k=>h.includes(k)).length};hits=notes.filter(n=>sc(n)>0).sort((a,b)=>sc(b)-sc(a))}
+ R.innerHTML=hits.length?hits.map(n=>nc(n)).join(''):"<p class='mut' style='text-align:center'>No matching voice notes found.</p>"}
+$('#sb').onclick=search;$('#q').onkeydown=e=>{if(e.key==='Enter')search()};
+calR();ttR();notesR();meta();
+</script></body></html>
